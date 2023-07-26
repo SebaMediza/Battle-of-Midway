@@ -1,20 +1,24 @@
 package jgame23;
 
 import com.entropyinteractive.*;
-
-import javax.imageio.ImageIO;
 import java.awt.*;
-import java.io.IOException;
-import java.util.Objects;
+
 
 public class AvionEnemigo extends Enemigo{
     private long time, lastTime;
+
     public AvionEnemigo(String filename){
         super(filename);
-        this.setPosition ((getHeight() / 2) + 100, (getWidth() / 2) + 100);
+        this.setPosition (100,600);
+    }
+
+    public AvionEnemigo(String filename, int x, int y) {
+        super(filename);
+        this.setPosition(x, y);
         time = 0;
         lastTime = System.currentTimeMillis();
     }
+
     @Override
     public void disparar() {
         time += System.currentTimeMillis() - lastTime;
@@ -26,6 +30,19 @@ public class AvionEnemigo extends Enemigo{
     }
     public void disparaMisil(){
         super.dispararMisil();
+    }
+    public void autoMoverAvionBonus(){
+        this.setPosition(this.getX() + 5, this.getY());
+    }
+    public void autoMover1(){
+        double yNow = getY();
+        boolean wasd = true;
+        if (yNow < 600) {
+            this.setPosition(getX(), getY() + 1);
+        }
+        if (yNow > 10 && !wasd) {
+            this.setPosition(getX(), getY() - 2);
+        }
     }
     @Override
     public void mover(double delta, Keyboard keyboard) {}
