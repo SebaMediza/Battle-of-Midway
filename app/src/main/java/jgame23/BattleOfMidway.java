@@ -104,49 +104,50 @@ public class BattleOfMidway extends JGame {
             }
         }
 
-        if (avionEnemigoArrayList.size() < 5){
+        if (time > 500){
             addAvionEnemigoArrayList(new AvionEnemigo("imagenes/Enemigo.png",(157 + (avionEnemigoArrayList.size() * 100)),0));
+            time = 0;
         }
         for (AvionEnemigo avionEnemigo : avionEnemigoArrayList){
             avionEnemigo.autoMover1();
         }
-        //COLICION DE MUNICION AMIGA CON AVION ENEMIGO
         ArrayList<Municion> toDeleteMunicionAmiga= new ArrayList<>();
-        ArrayList<Municion> toDeleteMunicionEnemiga = new ArrayList<>();
-        ArrayList<Power_up> toDeletePowerUp = new ArrayList<>();
+        ArrayList<AvionEnemigo> toDeleteAvionEnemigo = new ArrayList<>();
+        ArrayList<Integer> toDeleteMunicionEnemiga = new ArrayList<>();
+//        ArrayList<Power_up> toDeletePowerUp = new ArrayList<>();
         ArrayList<AvionEnemigo> toDeleteBonusPlane = new ArrayList<>();
-        for (Municion municionAmiga : municionAmigaArrayList) {
-            int index = DetectorColiciones.detectarColicion(municionAmiga);
-            if (index != -1){
-                toDeleteMunicionAmiga.add(municionAmiga);
-                avionEnemigoArrayList.remove(index);
+
+        //COLICION DE MUNICION AMIGA CON AVION ENEMIGO
+        for (Municion municion : municionAmigaArrayList){
+            for (AvionEnemigo avionEnemigo : avionEnemigoArrayList){
+                if (DetectorColiciones.detectarColicionMunicionAmigaAvionEnemigo(municion, avionEnemigo)){
+                    toDeleteAvionEnemigo.add(avionEnemigo);
+                    toDeleteMunicionAmiga.add(municion);
+                }
             }
         }
-        //COLICION DE AVIONP_38 CON AVION ENEMIGO
-        avionEnemigoArrayList.removeIf(avionEnemigo -> DetectorColiciones.detectarColicion(avionP38));
-        //COLICION DE MUNICION ENEMIGA CON AVION_P38
-
         for (Municion municion : municionEnemigaArrayList) {
             municion.setPosition(municion.getX(), municion.getY() + 5);
-            if (DetectorColiciones.detectarColicion(municion, avionP38)){
-                toDeleteMunicionEnemiga.add(municion);
+            if (DetectorColiciones.detectarColicionMunicionEnemigaP38(municion, avionP38)){
+                toDeleteMunicionEnemiga.add(municionEnemigaArrayList.indexOf(municion));
             }
         }
-        for (Municion municion : toDeleteMunicionEnemiga){
-            municionEnemigaArrayList.remove(municion);
+        for (Integer municion : toDeleteMunicionEnemiga){
+            municionEnemigaArrayList.remove(municion.intValue());
+        }
+        for (AvionEnemigo avionEnemigo : avionEnemigoArrayList){
+            if (DetectorColiciones.detectarColicionP38AvionEnemigo(avionP38, avionEnemigo)){
+                toDeleteAvionEnemigo.add(avionEnemigo);
+            }
+        }
+        for (AvionEnemigo avionEnemigoInt : toDeleteAvionEnemigo){
+            avionEnemigoArrayList.remove(avionEnemigoInt);
+        }
+        for (Municion municionInt : toDeleteMunicionAmiga) {
+            municionAmigaArrayList.remove(municionInt);
         }
         for (AvionEnemigo avionEnemigo : avionEnemigoArrayList){
             avionEnemigo.disparar();
-//            avionEnemigo.dispararMisil();
-        }
-        for (Power_up powerUp : powerUpArrayList){
-            if (DetectorColiciones.detectarColicionesPowerUp(avionP38, powerUp)){
-                powerUp.activar(avionP38);
-                toDeletePowerUp.add(powerUp);
-            }
-        }
-        for (AvionEnemigo avionEnemigo : avionEnemigoBonusArrayList){
-            avionEnemigo.autoMoverAvionBonus();
         }
         //BONUS GENERADOS POR MATAR TODOS LOS AVIONCITOS
 
@@ -157,23 +158,11 @@ public class BattleOfMidway extends JGame {
         }
         for (Municion municionAmiga : municionAmigaArrayList) {
             for (AvionEnemigo avionEnemigo : avionEnemigoBonusArrayList){
-                if (DetectorColiciones.isColicion(municionAmiga, avionEnemigo)){
+                if (DetectorColiciones.detectarColicionMunicionAmigaAvionEnemigo(municionAmiga, avionEnemigo)){
                     toDeleteBonusPlane.add(avionEnemigo);
                     toDeleteMunicionAmiga.add(municionAmiga);
                 }
             }
-        }
-        for (Municion municion: toDeleteMunicionAmiga) {
-            municionAmigaArrayList.remove(municion);
-        }
-        for (AvionEnemigo avionEnemigo : toDeleteBonusPlane){
-            avionEnemigoBonusArrayList.remove(avionEnemigo);
-        }
-        for (Power_up powerUp :toDeletePowerUp){
-            powerUpArrayList.remove(powerUp);
-        }
-        for (AvionEnemigo avionEnemigo : toDeleteBonusPlane){
-            avionEnemigoBonusArrayList.remove(avionEnemigo);
         }
     }
 
