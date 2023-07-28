@@ -9,6 +9,7 @@ import java.util.*;
 public class BattleOfMidway extends JGame {
     private static final double VELOCIDAD_IMAGEN = 61, velocidadNuber = 200, velocidadBarco = 59;
     public static ArrayList<Municion> municionAmigaArrayList = new ArrayList<>();
+//    public static Hashtable<Integer,Municion> municionAmigaArrayList = new Hashtable<>();
     public static ArrayList<Municion> municionEnemigaArrayList = new ArrayList<>();
     public static ArrayList<AvionEnemigo> avionEnemigoArrayList = new ArrayList<>();
     public static ArrayList<Misil> misilArrayList = new ArrayList<>();
@@ -17,6 +18,10 @@ public class BattleOfMidway extends JGame {
     public static void addMunicionAmigaArrayList(Municion municion){
         municionAmigaArrayList.add(municion);
     }
+//    public static void addMunicionAmigaArrayList(Municion municion){
+//        int lastIndex = municionAmigaArrayList.size() + 1;
+//        municionAmigaArrayList.put(lastIndex, municion);
+//    }
     public static void addMunicionEnemigaArrayList(Municion municion){
         municionEnemigaArrayList.add(municion);
     }
@@ -35,11 +40,12 @@ public class BattleOfMidway extends JGame {
     //Ranking ranking = new Ranking();
     public static int finalScore = 0;
     BufferedImage img_fondo, imagenNubes, barquitos;
-    private  int offSetY, posicionNubesY, posicionBarcosY;
+    private int offSetY, posicionNubesY, posicionBarcosY;
     BufferedImage kabom = null;
     Avion_p38 avionP38;
+    Akato akato;
     private long time, lastTime, timePlane, lastTimePlane;
-    int i, cantEnemigos = 100;
+    int i, cantEnemigos = 100, temp = 10;
 
     public BattleOfMidway() {
         super("Battle Of Midway", 945, Toolkit.getDefaultToolkit().getScreenSize().height - 37);
@@ -54,6 +60,8 @@ public class BattleOfMidway extends JGame {
             imagenNubes = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("imagenes/nubes2.png")));
             barquitos = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("imagenes/barcos.png")));
             kabom = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("imagenes/explocion.gif")));
+            akato = new Akato("imagenes/avionAkato.png");
+            akato.setPosition(500, 500);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -104,50 +112,53 @@ public class BattleOfMidway extends JGame {
             }
         }
 
-        if (time > 500){
-            addAvionEnemigoArrayList(new AvionEnemigo("imagenes/Enemigo.png",(157 + (avionEnemigoArrayList.size() * 100)),0));
+        if (time > 500 && avionEnemigoArrayList.size() < 9){
+            addAvionEnemigoArrayList(new AvionEnemigo("imagenes/Enemigo.png",(10 + (avionEnemigoArrayList.size() * 100)),0));
             time = 0;
+            temp--;
         }
         for (AvionEnemigo avionEnemigo : avionEnemigoArrayList){
             avionEnemigo.autoMover1();
         }
         ArrayList<Municion> toDeleteMunicionAmiga= new ArrayList<>();
         ArrayList<AvionEnemigo> toDeleteAvionEnemigo = new ArrayList<>();
-        ArrayList<Integer> toDeleteMunicionEnemiga = new ArrayList<>();
+        ArrayList<Municion> toDeleteMunicionEnemiga = new ArrayList<>();
 //        ArrayList<Power_up> toDeletePowerUp = new ArrayList<>();
         ArrayList<AvionEnemigo> toDeleteBonusPlane = new ArrayList<>();
 
+        int indexOfRemovalMunicionAmiga = -1;
+        int indexOfRemovalAvionEnemigo = -1;
         //COLICION DE MUNICION AMIGA CON AVION ENEMIGO
         for (Municion municion : municionAmigaArrayList){
             for (AvionEnemigo avionEnemigo : avionEnemigoArrayList){
                 if (DetectorColiciones.detectarColicionMunicionAmigaAvionEnemigo(municion, avionEnemigo)){
-                    toDeleteAvionEnemigo.add(avionEnemigo);
-                    toDeleteMunicionAmiga.add(municion);
+//                    toDeleteAvionEnemigo.add(avionEnemigo);
+//                    toDeleteMunicionAmiga.add(municion);
+                    indexOfRemovalMunicionAmiga = municionAmigaArrayList.indexOf(municion);
+                    System.out.println(indexOfRemovalMunicionAmiga);
+                    indexOfRemovalAvionEnemigo = avionEnemigoArrayList.indexOf(avionEnemigo);
+                    System.out.println(indexOfRemovalAvionEnemigo);
+                    cantEnemigos--;
+                    System.out.println("ENEMIGOS RESTANTES: " + cantEnemigos);
                 }
             }
         }
         for (Municion municion : municionEnemigaArrayList) {
             municion.setPosition(municion.getX(), municion.getY() + 5);
             if (DetectorColiciones.detectarColicionMunicionEnemigaP38(municion, avionP38)){
-                toDeleteMunicionEnemiga.add(municionEnemigaArrayList.indexOf(municion));
+                toDeleteMunicionEnemiga.add(municion);
             }
         }
-        for (Integer municion : toDeleteMunicionEnemiga){
-            municionEnemigaArrayList.remove(municion.intValue());
-        }
+
         for (AvionEnemigo avionEnemigo : avionEnemigoArrayList){
             if (DetectorColiciones.detectarColicionP38AvionEnemigo(avionP38, avionEnemigo)){
                 toDeleteAvionEnemigo.add(avionEnemigo);
+                cantEnemigos--;
+                System.out.println("ENEMIGOS RESTANTES: " + cantEnemigos);
             }
         }
-        for (AvionEnemigo avionEnemigoInt : toDeleteAvionEnemigo){
-            avionEnemigoArrayList.remove(avionEnemigoInt);
-        }
-        for (Municion municionInt : toDeleteMunicionAmiga) {
-            municionAmigaArrayList.remove(municionInt);
-        }
         for (AvionEnemigo avionEnemigo : avionEnemigoArrayList){
-            avionEnemigo.disparar();
+//            avionEnemigo.disparar();
         }
         //BONUS GENERADOS POR MATAR TODOS LOS AVIONCITOS
 
@@ -163,6 +174,23 @@ public class BattleOfMidway extends JGame {
                     toDeleteMunicionAmiga.add(municionAmiga);
                 }
             }
+        }
+//        akato.disparar();
+//        for (Municion municion : toDeleteMunicionEnemiga){
+//            municionEnemigaArrayList.remove(municion);
+//        }
+//        for (AvionEnemigo avionEnemigoInt : toDeleteAvionEnemigo){
+//            avionEnemigoArrayList.remove(avionEnemigoInt);
+//        }
+//        for (Municion municionInt : toDeleteMunicionAmiga){
+//            municionAmigaArrayList.remove(municionInt);
+//        }
+//        for (AvionEnemigo avionEnemigo : toDeleteBonusPlane){
+//            avionEnemigoBonusArrayList.remove(avionEnemigo);
+//        }
+        if (indexOfRemovalMunicionAmiga != -1 && indexOfRemovalAvionEnemigo != -1) {
+            avionEnemigoArrayList.remove(indexOfRemovalAvionEnemigo);
+            municionAmigaArrayList.remove(indexOfRemovalMunicionAmiga);
         }
     }
 
@@ -192,6 +220,9 @@ public class BattleOfMidway extends JGame {
         g.setColor(Color.white);
         g.drawString(String.valueOf(avionP38.getEnegia()),482,52);
         g.drawString(String.valueOf(finalScore),7,52);
+        if (cantEnemigos == 0){
+            akato.draw(g);
+        }
     }
     public void gameShutdown() {
         Log.info(getClass().getSimpleName(), "Shutting down game");

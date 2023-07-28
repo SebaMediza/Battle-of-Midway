@@ -4,9 +4,13 @@ import java.awt.*;
 
 public abstract class DetectorColiciones extends Rectangle {
 public static boolean detectarColicionMunicionAmigaAvionEnemigo(Municion municion, AvionEnemigo avionEnemigo) {
+    boolean isColition = false;
     Rectangle objeto1 = new Rectangle((int) municion.getX(), (int) municion.getY(), (int) municion.getWidth(), (int) municion.getHeigth());
     Rectangle objeto2 = new Rectangle((int) avionEnemigo.getX(), (int) avionEnemigo.getY(), (int) avionEnemigo.getHeigth(), (int) avionEnemigo.getWidth());
-    return objeto1.intersects(objeto2);
+    if (objeto1.intersects(objeto2)){
+        isColition = true;
+    }
+    return isColition;
 }
     public static boolean detectarColicionP38AvionEnemigo(Avion_p38 avionP38, AvionEnemigo avionEnemigo) {
         Rectangle objeto1 = new Rectangle((int) avionP38.getX(), (int) avionP38.getY(), (int) avionP38.getWidth(), (int) avionP38.getHeigth());
