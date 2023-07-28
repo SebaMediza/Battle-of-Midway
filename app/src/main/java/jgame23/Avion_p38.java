@@ -19,13 +19,10 @@ class Avion_p38 extends ObjetoGrafico implements Movible {
     private final ArmaGenerica gun = new ArmaGenerica();
     public static int enegia = 100;
     private long time, lastTime;
-
-
     int xMin = 0;
     int yMin = 27;
     int xMax = 895;
     int yMax = Toolkit.getDefaultToolkit().getScreenSize().height - 76;
-
     private boolean inclinadoIzquierda = false;
     private boolean inclinadoDerecha = false;
     BufferedImage imagenincliizqui;
@@ -113,10 +110,6 @@ class Avion_p38 extends ObjetoGrafico implements Movible {
         if (keyboard.isKeyPressed(KeyEvent.VK_Z) && time > 200){
             gun.disparar(this);
             time = 0;
-
-        }
-        if (keyboard.isKeyPressed(KeyEvent.VK_H)){
-            BattleOfMidway.addAvionEnemigoArrayList(new AvionEnemigo("imagenes/avionEnemigo.png"));
         }
         // Esc fin del juego
         LinkedList< KeyEvent > keyEvents = keyboard.getEvents();

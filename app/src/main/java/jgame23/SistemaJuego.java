@@ -13,6 +13,10 @@ public class SistemaJuego extends JFrame implements ActionListener{
     ImageIcon home, user, community;
     JButton homeButton, communityButton, userButton;
     Thread t;
+    JFrame playerData;
+    JTextArea playerName;
+    JButton done;
+    String playerNameString = "test";
 
 
     public SistemaJuego() {
@@ -31,6 +35,7 @@ public class SistemaJuego extends JFrame implements ActionListener{
         mainFrame.pack();
         mainFrame.setVisible(true);
 
+
         /*CONFIGURACION EL PANEL SUPERIOR*/
         leftPanel.setLayout(new GridBagLayout());
         GridBagConstraints constraints = new GridBagConstraints();
@@ -42,6 +47,7 @@ public class SistemaJuego extends JFrame implements ActionListener{
         userButton.setIcon(user);
         constraints.gridx = 0;
         constraints.gridy = 0;
+        userButton.addActionListener(this);
         leftPanel.add(userButton, constraints);
         home = new ImageIcon("app/src/main/resources/ImagesSisJuego/hogar.png");
         homeButton = new JButton("Libreria");
@@ -152,16 +158,67 @@ public class SistemaJuego extends JFrame implements ActionListener{
     }
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
-        if(actionEvent.getActionCommand().equals(b0.getActionCommand())){
-            BattleOfMidway game = new BattleOfMidway();
-            t = new Thread(() -> game.run(1.0 / 60.0));
-            t.start();
+        if (!playerNameString.equals("test")) {
+            if (actionEvent.getActionCommand().equals(b0.getActionCommand())) {
+                BattleOfMidway game = new BattleOfMidway();
+                t = new Thread(() -> game.run(1.0 / 60.0));
+                t.start();
+            }
+        } else {
+            userError();
         }
+
+        if (actionEvent.getActionCommand().equals(userButton.getActionCommand())){
+            addPlayerData();
+        }
+        if (actionEvent.getActionCommand().equals(done.getActionCommand())){
+            playerNameString = playerName.getText();
+            System.out.println(playerNameString);
+            playerData.setVisible(false);
+        }
+
     }
+
     public static void main(String[] args) {
-        //new SistemaJuego();
-        BattleOfMidway game = new BattleOfMidway();
-        Thread t = new Thread(() -> game.run(1.0 / 60.0));
-        t.start();
+        new SistemaJuego();
+    }
+
+    private void addPlayerData(){
+        playerData = new JFrame();
+        playerData.setLayout(new GridBagLayout());
+        playerData.setSize(250, 250);
+        GridBagConstraints gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.insets = new Insets(3, 3, 3, 3);
+
+        playerName = new JTextArea();
+        done = new JButton("Aceptar");
+
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        playerData.add(playerName, gridBagConstraints);
+
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        playerData.add(done, gridBagConstraints);
+        done.addActionListener(this);
+        playerData.setVisible(true);
+        playerData.setDefaultCloseOperation(EXIT_ON_CLOSE);
+    }
+    private void userError(){
+        JFrame temp = new JFrame();
+        temp.setBounds(132, 132,300, 250);
+        temp.setLayout(new GridBagLayout());
+        GridBagConstraints gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.insets = new Insets(5, 5, 5, 5);
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        JLabel jLabel = new JLabel("Por favor, ingrese un nombre de usuario valido");
+        temp.add(jLabel, gridBagConstraints);
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        JButton jButton = new JButton("Aceptar");
+        jButton.addActionListener(e -> temp.setVisible(false));
+        temp.add(jButton, gridBagConstraints);
+        temp.setVisible(true);
     }
 }

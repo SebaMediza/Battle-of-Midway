@@ -1,7 +1,6 @@
 package jgame23;
 
-import com.entropyinteractive.Keyboard;
-
+import com.entropyinteractive.*;
 import java.awt.*;
 
 public class Akato extends Enemigo{
@@ -21,5 +20,10 @@ public class Akato extends Enemigo{
     @Override
     public double getCoordenadas() {
         return 0;
+    }
+
+    @Override
+    protected void disparar() {
+        super.disparar();
     }
 }
