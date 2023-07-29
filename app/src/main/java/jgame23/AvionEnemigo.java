@@ -6,11 +6,11 @@ import java.awt.*;
 
 public class AvionEnemigo extends Enemigo {
     boolean backwards = true;
-    float speed = 100;
+    float speed = 10;
     float x, y; // Object's position
-    float amplitudeX = 5, amplitudeY = 5; // Amplitude of the loop in the x and y directions
-    float frequencyX = 2, frequencyY = 2; // Frequency of the loop in the x and y directions
-    float angle; // Current angle in radians
+    float amplitudeX = 2, amplitudeY = 2; // Amplitude of the loop in the x and y directions
+    float frequencyX = 1, frequencyY = 1; // Frequency of the loop in the x and y directions
+    float angle = 0.0f; // Current angle in radians
 
     public AvionEnemigo(String filename) {
         super(filename);
@@ -48,12 +48,6 @@ public class AvionEnemigo extends Enemigo {
                 // Object class for the object performing the loop
                 x = (float) this.getX();
                 y = (float) this.getY();
-                amplitudeX = 5;
-                amplitudeY = 5;
-                frequencyX = 2;
-                frequencyY = 2;
-                angle = 0.0f;
-                speed = 10;
                 // Increment the angle based on the speed
                 angle += speed;
                 // Calculate the object's position in the loop using sine and cosine functions
