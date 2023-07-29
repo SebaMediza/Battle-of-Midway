@@ -5,12 +5,12 @@ import java.awt.image.BufferedImage;
 
 public abstract class Enemigo extends ObjetoGrafico{
 
-    private long time, lastTime;
+    private long time, lastTime,timeMisil,lastTimeMisil;
 
     public Enemigo(String filename) {
         super(filename);
-        time = 0;
-        lastTime = System.currentTimeMillis();
+        time = timeMisil = 0;
+        lastTime = lastTimeMisil = System.currentTimeMillis();
     }
 
     private ArmaGenerica gun = new ArmaGenerica();
@@ -51,6 +51,11 @@ public abstract class Enemigo extends ObjetoGrafico{
     }
 
     protected void dispararMisil(){
-        gun.dispararMisil(this);
+        timeMisil += System.currentTimeMillis() - lastTimeMisil;
+        lastTimeMisil = System.currentTimeMillis();
+        if(timeMisil > 2000) {
+            gun.dispararMisil(this);
+            timeMisil = 0;
+        }
     }
 }
