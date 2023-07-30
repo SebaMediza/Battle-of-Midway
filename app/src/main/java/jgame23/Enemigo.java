@@ -50,11 +50,11 @@ public abstract class Enemigo extends ObjetoGrafico{
         }
     }
 
-    protected void dispararMisil(){
+    protected void dispararMisil(double x, double y){
         timeMisil += System.currentTimeMillis() - lastTimeMisil;
         lastTimeMisil = System.currentTimeMillis();
         if(timeMisil > 2000) {
-            gun.dispararMisil(this);
+            gun.dispararMisil(x, y);
             timeMisil = 0;
         }
     }

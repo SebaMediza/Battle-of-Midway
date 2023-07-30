@@ -1,25 +1,39 @@
 package jgame23;
 
 import com.entropyinteractive.*;
+
+import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.Objects;
 
 
 public class AvionEnemigo extends Enemigo {
-    boolean backwards = true;
-    float speed = 10;
+    boolean backwards = false, left = false;
+    int speedAvionEnemigo = 3, speedAvionBonus = 5;
     float x, y; // Object's position
-    float amplitudeX = 2, amplitudeY = 2; // Amplitude of the loop in the x and y directions
-    float frequencyX = 1, frequencyY = 1; // Frequency of the loop in the x and y directions
-    float angle = 0.0f; // Current angle in radians
+    float amplitudeX = 4, amplitudeY = 4; // Amplitude of the loop in the x and y directions
+//    float frequencyX = 2, frequencyY = 2; // Frequency of the loop in the x and y directions
+    float angle = 90.0f; // Current angle in radians
+    float angleBonus = 180.0f;
 
-    public AvionEnemigo(String filename) {
-        super(filename);
-        this.setPosition(100, 600);
-    }
+    BufferedImage enemigo_0, enemigo_45, enemigo_90, enemigo_135, enemigo_180, enemigo_245, enemigo_270;
 
     public AvionEnemigo(String filename, int x, int y) {
         super(filename);
         this.setPosition(x, y);
+        try {
+            enemigo_0 = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("imagenes/enemigo_0.png")));
+            enemigo_45 = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("imagenes/enemigo_45.png")));
+            enemigo_90 = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("imagenes/enemigo_90.png")));
+            enemigo_135 = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("imagenes/enemigo_135.png")));
+            enemigo_180 = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("imagenes/enemigo_180.png")));
+            enemigo_245 = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("imagenes/enemigo_245.png")));
+            enemigo_270 = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("imagenes/enemigo_270.png")));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -33,57 +47,85 @@ public class AvionEnemigo extends Enemigo {
     }
 
     public void disparaMisil() {
-        super.dispararMisil();
-    }
-
-    public void autoMoverAvionBonus() {
-        this.setPosition(this.getX() + 5, this.getY());
+        super.dispararMisil(this.getX(), this.getY());
     }
 
     public void autoMover1() {
+        int xOrigin = (int) this.getX();
+        int yOrigin = (int) this.getY();
         double yNow = getY();
-        if (yNow < 500 && backwards) {
-            this.setPosition(getX(), getY() + 5);
+        if (yNow < 600 && !backwards) {
+            this.setPosition(getX(), getY() + speedAvionEnemigo);
             if (yNow > 490) {
-                // Object class for the object performing the loop
-                x = (float) this.getX();
-                y = (float) this.getY();
-                // Increment the angle based on the speed
-                angle += speed;
-                // Calculate the object's position in the loop using sine and cosine functions
-                x = amplitudeX * (float) Math.cos(angle * frequencyX);
-                y = amplitudeY * (float) Math.sin(angle * frequencyY);
-                this.setPosition(x, y);
+                angle += speedAvionEnemigo;
+                x = amplitudeX * (float) Math.cos(angle * Math.PI / 180);
+                y = amplitudeY * (float) Math.sin(angle * Math.PI / 180);
+                this.setPosition(xOrigin + x, yOrigin + y);
+                if (y < -1) {
+                    try {
+                        this.image = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("imagenes/enemigo_90.png")));
+                    } catch (IOException e) {
+                        System.out.println(e.getMessage());
+                    }
+                backwards = true;
+                angle = 90f;
+                }
             }
         }
-//        backwards = false;
-//        if (yNow > 10 && !backwards) {
-//            this.setPosition(getX(), getY() - 5);
-//            if (yNow < 30){
-//                backwards = true;
-//            }
-//        }
-    }
-    public void autoMover2(double targetX, double targetY){
-        // Calculate movement vector
-        float dx = (float) (targetX - this.getX());
-        float dy = (float) (targetY - this.getY());
-
-        // Calculate the magnitude of the vector
-        float magnitude = (float) Math.sqrt(dx * dx + dy * dy);
-        // Normalize the vector
-        if (magnitude > 0) {
-            dx /= magnitude;
-            dy /= magnitude;
+        if (yNow > 10 && backwards) {
+            this.setPosition(getX(), getY() - speedAvionEnemigo);
         }
+    }
+    public void autoMover2(){
+        this.setPosition(this.getX() + speedAvionEnemigo, this.getY());
+    }
+    public void autoMover3() {
+        int xOrigin = (int) this.getX();
+        int yOrigin = (int) this.getY();
+        double yNow = getY();
+        if (yNow < 600 && !left) {
+            this.setPosition(getX(), getY() + speedAvionEnemigo);
+            if (yNow > 490) {
+                angle += speedAvionEnemigo;
+                x = amplitudeX * (float) Math.cos(angle * Math.PI / 180);
+                y = amplitudeY * (float) Math.sin(angle * Math.PI / 180);
+                this.setPosition(xOrigin + x, yOrigin + y);
+                if (y < 3) {
+                    try {
+                        this.image = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("imagenes/enemigo_180.png")));
+                    } catch (IOException e) {
+                        System.out.println(e.getMessage());
+                    }
+                    left = true;
+                }
+            }
+        }
+        if (left){
+            this.setPosition(this.getX() - speedAvionEnemigo, this.getY());
+        }
+    }
+    public void autoMover4(){
+        this.setPosition(this.getX() + speedAvionEnemigo, this.getY() + speedAvionEnemigo);
+    }
+    public void temp() {
+        if (this.getY() < 500) {
+            this.setPosition(this.getX(), this.getY() + 10);
+        }
+    }
 
-        // Set the follower's velocity
-        float velocityX = dx * speed;
-        float velocityY = dy * speed;
-        // Update the follower's position
-        x += velocityX;
-        y += velocityY;
-        this.setPosition(x, y);
+    public void autoMoverAvionBonus(){
+        BattleOfMidway.addAvionEnemigoBonusArrayList(new AvionEnemigo("imagenes/avionEnemigo.png",100,600));
+        int amplitudeX = 2, amplitudeY = 2;
+        int xOrigin = (int) this.getX();
+        int yOrigin = (int) this.getY();
+        double xNow = this.getX();
+        if (xNow > 487) {
+            angleBonus += speedAvionEnemigo;
+            x = amplitudeX * (float) Math.cos(angleBonus * Math.PI / 180);
+            y = amplitudeY * (float) Math.sin(angleBonus * Math.PI / 180);
+            this.setPosition(xOrigin + x, yOrigin - y);
+        }
+        this.setPosition(getX() + speedAvionBonus, getY());
     }
     @Override
     public void mover(double delta, Keyboard keyboard) {}

@@ -3,15 +3,11 @@ package jgame23;
 import java.awt.*;
 
 public abstract class DetectorColiciones extends Rectangle {
-public static boolean detectarColicionMunicionAmigaAvionEnemigo(Municion municion, AvionEnemigo avionEnemigo) {
-    boolean isColition = false;
-    Rectangle objeto1 = new Rectangle((int) municion.getX(), (int) municion.getY(), (int) municion.getWidth(), (int) municion.getHeigth());
-    Rectangle objeto2 = new Rectangle((int) avionEnemigo.getX(), (int) avionEnemigo.getY(), (int) avionEnemigo.getHeigth(), (int) avionEnemigo.getWidth());
-    if (objeto1.intersects(objeto2)){
-        isColition = true;
+    public static boolean detectarColicionMunicionAmigaAvionEnemigo(Municion municion, AvionEnemigo avionEnemigo) {
+        Rectangle objeto1 = new Rectangle((int) municion.getX(), (int) municion.getY(), (int) municion.getWidth(), (int) municion.getHeigth());
+        Rectangle objeto2 = new Rectangle((int) avionEnemigo.getX(), (int) avionEnemigo.getY(), (int) avionEnemigo.getHeigth(), (int) avionEnemigo.getWidth());
+    return objeto1.intersects(objeto2);
     }
-    return isColition;
-}
     public static boolean detectarColicionP38AvionEnemigo(Avion_p38 avionP38, AvionEnemigo avionEnemigo) {
         Rectangle objeto1 = new Rectangle((int) avionP38.getX(), (int) avionP38.getY(), (int) avionP38.getWidth(), (int) avionP38.getHeigth());
         Rectangle objeto2 = new Rectangle((int) avionEnemigo.getX(), (int) avionEnemigo.getY(), (int) avionEnemigo.getHeigth(), (int) avionEnemigo.getWidth());
@@ -31,6 +27,21 @@ public static boolean detectarColicionMunicionAmigaAvionEnemigo(Municion municio
         Rectangle objeto1 = new Rectangle((int) avionP38.getX(), (int) avionP38.getY(), (int) avionP38.getHeigth(), (int) avionP38.getWidth());
         Rectangle objeto2 = new Rectangle((int) avionEnemigo.getX(), (int) avionEnemigo.getY(), (int) avionEnemigo.getHeigth(), (int) avionEnemigo.getWidth());
         return objeto1.intersects(objeto2);
+    }
+    public static boolean detectarColicionMunicionAmigaBordePantalla(Municion municion){
+        Rectangle objeto1 = new Rectangle((int) municion.getX(), (int) municion.getY(), (int) municion.getHeigth(), (int) municion.getWidth());
+        Rectangle objeto2 = new Rectangle(0,  5, Toolkit.getDefaultToolkit().getScreenSize().width, 25);
+        return objeto1.intersects(objeto2);
+    }
+    public static boolean detectarColicionMunicionAmigaMisilEnemigo(Municion municion, Misil misil){
+        Rectangle objeto1 = new Rectangle((int) misil.getX(), (int) misil.getY(), (int) misil.getHeigth(), (int) misil.getWidth());
+        Rectangle objeto2 = new Rectangle((int) municion.getX(), (int) municion.getY(), (int) municion.getHeigth(), (int) municion.getWidth());
+        return objeto2.intersects(objeto1);
+    }
+    public static boolean detectarColicionP38MisilEnemigo(Avion_p38 avionP38, Misil misil){
+        Rectangle objeto1 = new Rectangle((int) misil.getX(), (int) misil.getY(), (int) misil.getHeigth(), (int) misil.getWidth());
+        Rectangle objeto2 = new Rectangle((int) avionP38.getX(), (int) avionP38.getY(), (int) avionP38.getHeigth(), (int) avionP38.getWidth());
+        return objeto2.intersects(objeto1);
     }
     public static boolean detectarColicion(Municion municionAmiga, Municion municionEnemiga){
         boolean colicion = false;

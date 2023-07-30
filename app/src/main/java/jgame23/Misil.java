@@ -6,7 +6,7 @@ import java.awt.*;
 
 
 public class Misil extends ObjetoGrafico{
-    float speed = 5;
+    float speed = 10;
     public Misil(String filename) {
         super(filename);
     }

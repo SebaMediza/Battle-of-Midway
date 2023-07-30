@@ -2,15 +2,20 @@ package jgame23;
 
 import com.entropyinteractive.Keyboard;
 
+import java.awt.*;
+
 public class Yamato extends Enemigo{
     public Yamato(String filename) {
         super(filename);
     }
 
     @Override
-    public void mover(double delta, Keyboard keyboard) {
-
+    public void draw(Graphics2D g) {
+        super.draw(g);
     }
+
+    @Override
+    public void mover(double delta, Keyboard keyboard) {}
 
     @Override
     public double getCoordenadas() {
