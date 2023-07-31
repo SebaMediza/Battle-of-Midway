@@ -40,7 +40,6 @@ public abstract class Enemigo extends ObjetoGrafico{
         }
     }
 
-
     protected void disparar(){
         time += System.currentTimeMillis() - lastTime;
         lastTime = System.currentTimeMillis();

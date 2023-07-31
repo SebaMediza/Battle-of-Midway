@@ -14,7 +14,6 @@ public class AvionEnemigo extends Enemigo {
     int speedAvionEnemigo = 3, speedAvionBonus = 5;
     float x, y; // Object's position
     float amplitudeX = 4, amplitudeY = 4; // Amplitude of the loop in the x and y directions
-//    float frequencyX = 2, frequencyY = 2; // Frequency of the loop in the x and y directions
     float angle = 90.0f; // Current angle in radians
     float angleBonus = 180.0f;
 
@@ -44,10 +43,6 @@ public class AvionEnemigo extends Enemigo {
     @Override
     public void update(double delta) {
         super.update(delta);
-    }
-
-    public void disparaMisil() {
-        super.dispararMisil(this.getX(), this.getY());
     }
 
     public void autoMover1() {
@@ -114,7 +109,6 @@ public class AvionEnemigo extends Enemigo {
     }
 
     public void autoMoverAvionBonus(){
-        BattleOfMidway.addAvionEnemigoBonusArrayList(new AvionEnemigo("imagenes/avionEnemigo.png",100,600));
         int amplitudeX = 2, amplitudeY = 2;
         int xOrigin = (int) this.getX();
         int yOrigin = (int) this.getY();

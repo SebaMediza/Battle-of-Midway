@@ -59,18 +59,4 @@ public abstract class DetectorColiciones extends Rectangle {
         Rectangle objeto2 = new Rectangle((int) powerUp.getX(), (int) powerUp.getY(), (int) powerUp.getHeigth(), (int) powerUp.getWidth());
         return objeto1.intersects(objeto2);
     }
-
-
-    public static int detectarColicionMuicionAvionBonus(Municion objetoGrafico1){
-        int valor = -1;
-        for (AvionEnemigo plane: BattleOfMidway.avionEnemigoBonusArrayList) {
-            Rectangle objeto1 = new Rectangle((int) objetoGrafico1.getX(), (int) objetoGrafico1.getY(), (int) objetoGrafico1.getWidth(), (int) objetoGrafico1.getHeigth());
-            Rectangle objeto2 = new Rectangle((int) plane.getX(), (int) plane.getY(), (int) plane.getHeigth(), (int) plane.getWidth());
-            if (objeto1.intersects(objeto2)) {
-                valor = BattleOfMidway.avionEnemigoBonusArrayList.indexOf(plane);
-                BattleOfMidway.finalScore += 1000;
-            }
-        }
-        return valor;
-    }
 }
