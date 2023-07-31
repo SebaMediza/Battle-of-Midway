@@ -15,9 +15,9 @@ public abstract class Arma {
         bala.setPosition(plane.getX(), plane.getY());
     }
 
-    public void dispararMisil(Enemigo enemigo){
+    public void dispararMisil(double x, double y){
         Misil misil = new Misil("imagenes/misil.png");
         BattleOfMidway.addMisilArrayList(misil);
-        misil.setPosition(enemigo.getX(), enemigo.getY());
+        misil.setPosition(x, y);
     }
 }
