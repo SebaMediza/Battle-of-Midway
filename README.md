@@ -15,6 +15,4 @@
     - Ing. Denis Peppino
     
   # Integrantes:
-    - Pereyra Federico
-    - Cenicero Joaquin
     - Mediza Sebastián
