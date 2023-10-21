@@ -12,7 +12,7 @@ import java.util.Objects;
 
 import static java.lang.System.*;
 
-class Avion_p38 extends ObjetoGrafico implements Movible {
+class Avion_p38 extends ObjetoGrafico{
     final double NAVE_DESPLAZAMIENTO=450.0;
     BufferedImage imagen = null;
     private final Point2D.Double posicion = new Point2D.Double();

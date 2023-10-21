@@ -150,7 +150,7 @@ public class BattleOfMidway extends JGame{
             indexOfRemovalAvionEnemigo = 0;
         }
         for (Map.Entry<Integer, AvionEnemigo> avionEnemigoEntry : avionEnemigoHashtable.entrySet()){
-//            avionEnemigoEntry.getValue().disparar();
+            avionEnemigoEntry.getValue().disparar();
         }
         for (Municion municion : municionEnemigaArrayList) {
             municion.setPosition(municion.getX(), municion.getY() + 5);
@@ -203,12 +203,14 @@ public class BattleOfMidway extends JGame{
         }
         yamato(isBossTime);
     }
-
+    
     public void gameDraw(Graphics2D g) {
+        if (isBossTime){
+            yamato.draw(g);
+        }
         g.drawImage(img_fondo, 0, -offSetY,null);// imagen de fondo
         g.drawImage(barquitos, 0, -posicionBarcosY, null);
         g.drawImage(imagenNubes, 0, -posicionNubesY, null);// imagen nubes
-        avionP38.draw(g);
         for (Municion bala : municionAmigaArrayList){
             bala.draw(g);
         }
@@ -233,9 +235,7 @@ public class BattleOfMidway extends JGame{
         g.setColor(Color.white);
         g.drawString(String.valueOf(avionP38.getEnegia()),482,52);
         g.drawString(String.valueOf(finalScore),7,52);
-        if (isBossTime){
-            yamato.draw(g);
-        }
+        avionP38.draw(g);
     }
 
     public void yamato(Boolean isBossTime){
