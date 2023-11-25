@@ -10,8 +10,9 @@ import java.util.Objects;
 */
 
 public class Pow extends Power_up{
-    public Pow(String filename) {
+    public Pow(String filename, int x, int y) {
         super(filename);
+        this.setPosition(x, y);
     }
 
 //    @Override

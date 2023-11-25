@@ -11,7 +11,7 @@ import java.util.Objects;
 
 public class AvionEnemigo extends Enemigo {
     boolean backwards = false, left = false;
-    int speedAvionEnemigo = 3, speedAvionBonus = 5;
+    int speedAvionEnemigo = 3, speedAvionBonus = 1;
     float x, y; // Object's position
     float amplitudeX = 4, amplitudeY = 4; // Amplitude of the loop in the x and y directions
     float angle = 90.0f; // Current angle in radians

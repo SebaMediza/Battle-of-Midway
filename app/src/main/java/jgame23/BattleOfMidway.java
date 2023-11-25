@@ -65,7 +65,6 @@ public class BattleOfMidway extends JGame {
 
     public void gameStartup() {
         try {
-            hilo = new Thread(patron1);
             avionP38 = new Avion_p38("imagenes/avionp38.png");
             avionP38.setPosicion((double) getWidth() / 2, (double) getHeight() / 2);
             img_fondo = ImageIO.read(
@@ -118,28 +117,28 @@ public class BattleOfMidway extends JGame {
         timeForBonus += System.currentTimeMillis() - lastTimeForBonus;
         lastTimeForBonus = System.currentTimeMillis();
 
-        /*
-         * if (timeForBonus > 1000 && powerUpArrayList.isEmpty()){
-         * timePlane += System.currentTimeMillis() - lastTimePlane;
-         * lastTimePlane = System.currentTimeMillis();
-         * for (; cantAvionBonus <5 && timePlane > 500; cantAvionBonus++) {
-         * addAvionEnemigoBonusHashtable(new
-         * AvionEnemigo("imagenes/avionEnemigo.png",0,200));
-         * timePlane = 0;
-         * }
-         * if (avionEnemigoBonusHashtable.isEmpty() && time != 0){
-         * addPowerUpArrayList(new Pow("imagenes/Pow.png"));
-         * cantAvionBonus = 0;
-         * time = 0;
-         * }
-         * }
-         */
         if (!isBossTime && inScreenEnemies == 0) {
             Random random = new Random();
-            patronAvionesEnemigo =  random.nextInt(5) + 1;
+            patronAvionesEnemigo = random.nextInt(5) + 1;
             masAviones(patronAvionesEnemigo);
         }
         movimiento(patronAvionesEnemigo);
+
+        if (timeForBonus > 1500 && powerUpArrayList.isEmpty()) {
+            if (avionEnemigoBonusHashtable.isEmpty()) {
+                for (int i = 0; i < 5; i++) {
+                    addAvionEnemigoBonusHashtable(new AvionEnemigo("imagenes/avionEnemigo.png", (0), ((i + 10) * 10)));
+                }
+            }
+        }
+
+        if (timeForBonus > 1500 && avionEnemigoBonusHashtable.isEmpty()) {
+            Random random = new Random();
+            int x = random.nextInt(945) + 1;
+            int y = random.nextInt(945) + 1;
+            addPowerUpArrayList(new Pow("imagenes/pow.png", x, y));
+            timeForBonus = 0;
+        }
 
         ArrayList<Municion> toDeleteMunicionAmiga = new ArrayList<>();
         ArrayList<Municion> toDeleteMunicionEnemiga = new ArrayList<>();
@@ -184,7 +183,7 @@ public class BattleOfMidway extends JGame {
                 toDeleteMisilEnemigo.add(misil);
             }
         }
-        if (cantEnemigosDerrotados == 1500) {
+        if (cantEnemigosDerrotados > 15 && inScreenEnemies == 0) {
             isBossTime = true;
         }
         // BONUS GENERADOS POR MATAR TODOS LOS AVIONCITOS
@@ -272,19 +271,40 @@ public class BattleOfMidway extends JGame {
     private void masAviones(int patron) {
         switch (patron) {
             case 1:
-                for (int i = 0; i < 10; i++) {
-                    addAvionEnemigoHashtable(new AvionEnemigo("imagenes/Enemigo.png", ((inScreenEnemies + 5) * 60), 15));
+                for (int i = 0; i < 5; i++) {
+                    addAvionEnemigoHashtable(
+                            new AvionEnemigo("imagenes/Enemigo.png", ((inScreenEnemies + 5) * 60), 15));
                     inScreenEnemies++;
-                }
-
-            case 2:
-                for (int i = 0; i < 10 && time > 1000; i++) {
-                    addAvionEnemigoHashtable(new AvionEnemigo("imagenes/enemigo_195.png", 0, (i + 5) * 60));
-                    inScreenEnemies++;
-                    time = 0;
                 }
                 break;
-
+            case 2:
+                for (int i = 0; i < 10; i++) {
+                    addAvionEnemigoHashtable(
+                            new AvionEnemigo("imagenes/enemigo_195.png", 0, (inScreenEnemies + 5) * 60));
+                    inScreenEnemies++;
+                }
+                break;
+            case 3:
+                for (int i = 0; i < 5; i++) {
+                    addAvionEnemigoHashtable(
+                            new AvionEnemigo("imagenes/Enemigo.png", (inScreenEnemies + 10) * 40, i * 10));
+                    inScreenEnemies++;
+                }
+                break;
+            case 4:
+                for (int i = 0; i < 5; i++) {
+                    addAvionEnemigoHashtable(
+                            new AvionEnemigo("imagenes/enemigo_315.png", inScreenEnemies * 30, inScreenEnemies * 30));
+                    inScreenEnemies++;
+                }
+                break;
+            case 5:
+                for (int i = 0; i < 5; i++) {
+                    addAvionEnemigoHashtable(new AvionEnemigo("imagenes/enemigo_195.png",
+                            (945 - (inScreenEnemies * 30)), inScreenEnemies * 30));
+                    inScreenEnemies++;
+                }
+                break;
         }
     }
 
@@ -300,12 +320,23 @@ public class BattleOfMidway extends JGame {
                     avionEnemigoEntry.getValue().autoMover2();
                 }
                 break;
+            case 3:
+                for (Map.Entry<Integer, AvionEnemigo> avionEnemigoEntry : avionEnemigoHashtable.entrySet()) {
+                    avionEnemigoEntry.getValue().autoMover3();
+                }
+                break;
+            case 4:
+                for (Map.Entry<Integer, AvionEnemigo> avionEnemigoEntry : avionEnemigoHashtable.entrySet()) {
+                    avionEnemigoEntry.getValue().autoMover4();
+                }
+                break;
+            case 5:
+                for (Map.Entry<Integer, AvionEnemigo> avionEnemigoEntry : avionEnemigoHashtable.entrySet()) {
+                    avionEnemigoEntry.getValue().autoMover5();
+                }
+                break;
 
         }
 
     }
-
-    Runnable patron1 = () -> {
-
-    };
 }
