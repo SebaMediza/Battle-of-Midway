@@ -44,7 +44,7 @@ public class AvionEnemigo extends Enemigo {
     public void update(double delta) {
         super.update(delta);
     }
-
+    //Hace una U
     public void autoMover1() {
         int xOrigin = (int) this.getX();
         int yOrigin = (int) this.getY();
@@ -71,9 +71,11 @@ public class AvionEnemigo extends Enemigo {
             this.setPosition(getX(), getY() - speedAvionEnemigo);
         }
     }
+    //Va de costado
     public void autoMover2(){
         this.setPosition(this.getX() + speedAvionEnemigo, this.getY());
     }
+    //del medio y sale por el lateral
     public void autoMover3() {
         int xOrigin = (int) this.getX();
         int yOrigin = (int) this.getY();
@@ -99,9 +101,15 @@ public class AvionEnemigo extends Enemigo {
             this.setPosition(this.getX() - speedAvionEnemigo, this.getY());
         }
     }
+    //en diagonal
     public void autoMover4(){
         this.setPosition(this.getX() + speedAvionEnemigo, this.getY() + speedAvionEnemigo);
     }
+    //para el otro diagonal
+    public void autoMover5(){
+        this.setPosition(this.getX() - speedAvionEnemigo, this.getY() + speedAvionEnemigo);
+    }
+    
     public void temp() {
         if (this.getY() < 500) {
             this.setPosition(this.getX(), this.getY() + 10);

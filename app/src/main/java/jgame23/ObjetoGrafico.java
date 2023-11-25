@@ -14,7 +14,9 @@ public abstract class ObjetoGrafico extends Rectangle implements Movible{
 
     public ObjetoGrafico(String filename){
         try{
-            this.image = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream(filename)));
+            if (this.image == null) {
+                this.image = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream(filename)));
+            }
         }catch (IOException e){
             throw new RuntimeException(e);
         }

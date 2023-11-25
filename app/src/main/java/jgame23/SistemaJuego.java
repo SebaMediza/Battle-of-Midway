@@ -1,14 +1,15 @@
 package jgame23;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Arrays;
 
-public class SistemaJuego extends JFrame implements ActionListener{
+public class SistemaJuego extends JFrame implements ActionListener {
     JFrame mainFrame;
     JPanel leftPanel, midPanel;
-    JLabel l0, l1, l2, l3, l4, l5, l6, l7, l8, l9, l10, l11, l12, l13, l14, l15;
-    ImageIcon i0, i1, i2, i3, i4, i5, i6, i7, i8, i9, i10,i11, i12, i13, i14, i15;
+    JLabel l0, l1, l2, l3, l4, l5, l6, l7, l8, l9, l10, l11, l12, l13, l14, l15, warning;
+    ImageIcon i0, i1, i2, i3, i4, i5, i6, i7, i8, i9, i10, i11, i12, i13, i14, i15;
     JButton b0, b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11, b12, b13, b14, b15;
     ImageIcon home, user, community;
     JButton homeButton, communityButton, userButton;
@@ -18,12 +19,12 @@ public class SistemaJuego extends JFrame implements ActionListener{
     JButton done;
     String playerNameString = "test";
 
-
     public SistemaJuego() {
         this.GUI();
     }
+
     private void GUI() {
-        /*CONFIGURACION DEL FRAME PRINCIPAL*/
+        /* CONFIGURACION DEL FRAME PRINCIPAL */
         mainFrame = new JFrame();
         mainFrame.setLayout(new BorderLayout());
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -35,12 +36,11 @@ public class SistemaJuego extends JFrame implements ActionListener{
         mainFrame.pack();
         mainFrame.setVisible(true);
 
-
-        /*CONFIGURACION EL PANEL SUPERIOR*/
+        /* CONFIGURACION EL PANEL SUPERIOR */
         leftPanel.setLayout(new GridBagLayout());
         GridBagConstraints constraints = new GridBagConstraints();
-        constraints.insets = new Insets(5,5,5,5);
-        leftPanel.setBackground(new Color(100,100,100));
+        constraints.insets = new Insets(5, 5, 5, 5);
+        leftPanel.setBackground(new Color(100, 100, 100));
 
         user = new ImageIcon("app/src/main/resources/ImagesSisJuego/hombre.png");
         userButton = new JButton("Ususario");
@@ -60,13 +60,13 @@ public class SistemaJuego extends JFrame implements ActionListener{
         constraints.gridx = 2;
         leftPanel.add(communityButton, constraints);
 
-        /*CONFIGURACION EL PANEL CENTRAL*/
-        midPanel.setBackground(new Color(133,133,133));
+        /* CONFIGURACION EL PANEL CENTRAL */
+        midPanel.setBackground(new Color(133, 133, 133));
         midPanel.setLayout(new GridBagLayout());
         GridBagConstraints constraints1 = new GridBagConstraints();
-        constraints1.insets = new Insets(3,3,3,3);
+        constraints1.insets = new Insets(3, 3, 3, 3);
 
-        /*BOTON Y MINIATURA DEL JUEGO*/
+        /* BOTON Y MINIATURA DEL JUEGO */
         i0 = new ImageIcon("app/src/main/resources/ImagesSisJuego/1943.png");
         l0 = new JLabel(i0);
         b0 = new JButton("Jugar");
@@ -76,7 +76,7 @@ public class SistemaJuego extends JFrame implements ActionListener{
         midPanel.add(l0, constraints1);
         constraints1.gridy = 1;
         midPanel.add(b0, constraints1);
-        /*BOTONES Y JUEGOS DE RELLENO*/
+        /* BOTONES Y JUEGOS DE RELLENO */
         i1 = new ImageIcon("app/src/main/resources/ImagesSisJuego/Grounded.jpg");
         i2 = new ImageIcon("app/src/main/resources/ImagesSisJuego/supermario64.png");
         i3 = new ImageIcon("app/src/main/resources/ImagesSisJuego/Pacman.jpg");
@@ -107,11 +107,12 @@ public class SistemaJuego extends JFrame implements ActionListener{
         l13 = new JLabel(i13);
         l14 = new JLabel(i14);
         l15 = new JLabel(i15);
-        /*AGREGO LOS BOTONES DE "DESCARGAR"*/
+        warning = new JLabel("Antes de comenzar a jugar ingresar tu nombre de usuario, haciendo click en el boto de usuario en la parte superior");
+        /* AGREGO LOS BOTONES DE "DESCARGAR" */
         constraints1.gridy = 1;
         int index = 2;
         for (JButton jbutton : Arrays.asList(b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11, b12, b13, b14, b15)) {
-            if(index == 9){
+            if (index == 9) {
                 constraints1.gridy = 3;
                 index = 1;
             }
@@ -120,7 +121,7 @@ public class SistemaJuego extends JFrame implements ActionListener{
             midPanel.add(jbutton, constraints1);
             index++;
         }
-        /*AGREGO EL RESTO DE ETIQUETAS CON LOS JUEGOS EN BLANCO*/
+        /* AGREGO EL RESTO DE ETIQUETAS CON LOS JUEGOS EN BLANCO */
         constraints1.gridx = 2;
         constraints1.gridy = 0;
         midPanel.add(l1, constraints1);
@@ -153,28 +154,23 @@ public class SistemaJuego extends JFrame implements ActionListener{
         midPanel.add(l14, constraints1);
         constraints1.gridx = 8;
         midPanel.add(l15, constraints1);
-        //System.out.println(System.getProperty("user.dir"));
+        // System.out.println(System.getProperty("user.dir"));
 
     }
+
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
-        if (!playerNameString.equals("test")) {
-            if (actionEvent.getActionCommand().equals(b0.getActionCommand())) {
-                BattleOfMidway game = new BattleOfMidway();
-                t = new Thread(() -> game.run(1.0 / 60.0));
-                t.start();
-            }
-        } else {
-            userError();
-        }
-
-        if (actionEvent.getActionCommand().equals(userButton.getActionCommand())){
+        if (actionEvent.getActionCommand().equals(userButton.getActionCommand())) {
             addPlayerData();
         }
-        if (actionEvent.getActionCommand().equals(done.getActionCommand())){
+        if (actionEvent.getActionCommand().equals(done.getActionCommand())) {
             playerNameString = playerName.getText();
-            System.out.println(playerNameString);
             playerData.setVisible(false);
+        }
+        if (actionEvent.getActionCommand().equals(b0.getActionCommand()) && !playerNameString.equals("test")) {
+            BattleOfMidway game = new BattleOfMidway();
+            t = new Thread(() -> game.run(1.0 / 60.0));
+            t.start();
         }
 
     }
@@ -183,7 +179,7 @@ public class SistemaJuego extends JFrame implements ActionListener{
         new SistemaJuego();
     }
 
-    private void addPlayerData(){
+    private void addPlayerData() {
         playerData = new JFrame();
         playerData.setLayout(new GridBagLayout());
         playerData.setSize(250, 250);
@@ -203,22 +199,5 @@ public class SistemaJuego extends JFrame implements ActionListener{
         done.addActionListener(this);
         playerData.setVisible(true);
         playerData.setDefaultCloseOperation(EXIT_ON_CLOSE);
-    }
-    private void userError(){
-        JFrame temp = new JFrame();
-        temp.setBounds(132, 132,300, 250);
-        temp.setLayout(new GridBagLayout());
-        GridBagConstraints gridBagConstraints = new GridBagConstraints();
-        gridBagConstraints.insets = new Insets(5, 5, 5, 5);
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        JLabel jLabel = new JLabel("Por favor, ingrese un nombre de usuario valido");
-        temp.add(jLabel, gridBagConstraints);
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        JButton jButton = new JButton("Aceptar");
-        jButton.addActionListener(e -> temp.setVisible(false));
-        temp.add(jButton, gridBagConstraints);
-        temp.setVisible(true);
     }
 }
