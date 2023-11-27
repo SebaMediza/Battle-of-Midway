@@ -4,8 +4,9 @@ import com.entropyinteractive.Keyboard;
 
 public class Auto extends Power_up{
 
-    public Auto(String filename) {
+    public Auto(String filename , int x, int y) {
         super(filename);
+        this.setPosition(x, y);
     }
 
     @Override
@@ -18,6 +19,6 @@ public class Auto extends Power_up{
 
     @Override
     protected void activar(Avion_p38 avionP38) {
-
+        avionP38.setAuto(true);
     }
 }
