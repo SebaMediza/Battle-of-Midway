@@ -124,20 +124,28 @@ public class BattleOfMidway extends JGame {
         }
         movimiento(patronAvionesEnemigo);
 
-        if (timeForBonus > 1500 && powerUpArrayList.isEmpty()) {
-            if (avionEnemigoBonusHashtable.isEmpty()) {
-                for (int i = 0; i < 5; i++) {
-                    addAvionEnemigoBonusHashtable(new AvionEnemigo("imagenes/avionEnemigo.png", (0), ((i + 10) * 10)));
-                }
+        if (timeForBonus > 1500 && avionEnemigoBonusHashtable.isEmpty() && cantAvionBonus == 0
+                && powerUpArrayList.isEmpty()) {
+            for (int i = 0; i < 5; i++) {
+                addAvionEnemigoBonusHashtable(new AvionEnemigo("imagenes/avionEnemigo.png", (0), ((i + 10) * 10)));
             }
         }
-
-        if (timeForBonus > 1500 && avionEnemigoBonusHashtable.isEmpty()) {
-            Random random = new Random();
-            int x = random.nextInt(945) + 1;
-            int y = random.nextInt(945) + 1;
-            addPowerUpArrayList(new Pow("imagenes/pow.png", x, y));
-            timeForBonus = 0;
+        if (cantAvionBonus == 5) {
+            // Random random = new Random();
+            // int randomPowerUp = random.nextInt(3) + 1;
+            addPowerUpArrayList(new Pow("imagenes/Pow.png", 152, 658));
+            /*
+             * switch (randomPowerUp) {
+             * case 1:
+             * break;
+             * case 2:
+             * addPowerUpArrayList(new Power_up("imagenes/PowerUp2.png", (0), ((0) * 10)));
+             * break;
+             * case 3:
+             * addPowerUpArrayList(new Power_up("imagenes/PowerUp3.png", (0), ((0) * 10)));
+             * break;
+             * }
+             */
         }
 
         ArrayList<Municion> toDeleteMunicionAmiga = new ArrayList<>();
@@ -200,6 +208,8 @@ public class BattleOfMidway extends JGame {
             for (Map.Entry<Integer, AvionEnemigo> avionEnemigoEntry : avionEnemigoBonusHashtable.entrySet()) {
                 if (DetectorColiciones.detectarColicionMunicionAmigaAvionEnemigo(municionAmiga,
                         avionEnemigoEntry.getValue())) {
+                    cantAvionBonus++;
+                    System.out.println(cantAvionBonus);
                     indexOfRemovalAvionEnemigo = avionEnemigoEntry.getKey();
                     toDeleteMunicionAmiga.add(municionAmiga);
                 }
