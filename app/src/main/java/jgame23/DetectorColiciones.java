@@ -59,4 +59,10 @@ public abstract class DetectorColiciones extends Rectangle {
         Rectangle objeto2 = new Rectangle((int) powerUp.getX(), (int) powerUp.getY(), (int) powerUp.getHeigth(), (int) powerUp.getWidth());
         return objeto1.intersects(objeto2);
     }
+    public static boolean detectarColicionesPowerUpBalas(Municion municion, Power_up powerUp){
+        Rectangle objeto1 = new Rectangle((int) municion.getX(), (int) municion.getY(), (int) municion.getHeigth(), (int) municion.getWidth());
+        Rectangle objeto2 = new Rectangle((int) powerUp.getX(), (int) powerUp.getY(), (int) powerUp.getHeigth(), (int) powerUp.getWidth());
+        return objeto1.intersects(objeto2);
+    }
+
 }

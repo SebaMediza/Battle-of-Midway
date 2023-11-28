@@ -1,8 +1,5 @@
 package jgame23;
 
-import java.awt.event.KeyEvent;
-import java.util.ArrayList;
-
 import com.entropyinteractive.Keyboard;
 
 public class Refuerzo extends Power_up {

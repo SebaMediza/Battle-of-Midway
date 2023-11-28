@@ -6,5 +6,8 @@ public class ArmaGenerica extends Arma{
     public void disparar(Avion_p38 plane){
         super.disparar(plane);
     }
+    public void disparar(AvionRefuerzo plane){
+        super.disparar(plane);
+    }
 
 }

@@ -96,7 +96,7 @@ public class BattleOfMidway extends JGame {
         Keyboard keyboard = this.getKeyboard();
         avionP38.mover(delta, keyboard);
         for (AvionRefuerzo avionRefuerzo : refuerzo) {
-            avionRefuerzo.mover(delta, keyboard, avionP38.getX(), avionP38.getY());
+            avionRefuerzo.mover(delta, keyboard);
         }
         // MOVIMIENTO DEL FONDO
         offSetY -= (int) (VELOCIDAD_IMAGEN * delta);
@@ -118,30 +118,34 @@ public class BattleOfMidway extends JGame {
         timeForBonus += System.currentTimeMillis() - lastTimeForBonus;
         lastTimeForBonus = System.currentTimeMillis();
 
-        if (!isBossTime && inScreenEnemies == 0 /*
-                                                 * && !hiloPatron1.isAlive() && !hiloPatron2.isAlive()
-                                                 * && !hiloPatron3.isAlive() && !hiloPatron4.isAlive() &&
-                                                 * !hiloPatron5.isAlive()
-                                                 */) {
-            Random random = new Random();
-            patronAvionesEnemigoNuevo = random.nextInt(5) + 1;
-            while (patronAvionesEnemigoNuevo == patronAvionesEnemigoViejo) {
-                patronAvionesEnemigoNuevo = random.nextInt(5) + 1;
-            }
-            patronAvionesEnemigoViejo = patronAvionesEnemigoNuevo;
-            masAviones(patronAvionesEnemigoNuevo);
-        }
-        movimiento(patronAvionesEnemigoNuevo);
-
-        if (timeForBonus > 1500 && avionEnemigoBonusHashtable.isEmpty() &&
-                powerUpArrayList.isEmpty() && cantAvionBonus == 0) {
-
-            for (int i = 0; i < 5; i++) {
-                addAvionEnemigoBonusHashtable(new AvionEnemigo("imagenes/avionEnemigo.png",
-                        (0), ((i + 10) * 10)));
-            }
-
-            //avionesBonus.start();
+        /*
+         * if (!isBossTime && inScreenEnemies == 0 /*
+         * && !hiloPatron1.isAlive() && !hiloPatron2.isAlive()
+         * && !hiloPatron3.isAlive() && !hiloPatron4.isAlive() &&
+         * !hiloPatron5.isAlive()
+         * ) {
+         * Random random = new Random();
+         * patronAvionesEnemigoNuevo = random.nextInt(5) + 1;
+         * while (patronAvionesEnemigoNuevo == patronAvionesEnemigoViejo) {
+         * patronAvionesEnemigoNuevo = random.nextInt(5) + 1;
+         * }
+         * patronAvionesEnemigoViejo = patronAvionesEnemigoNuevo;
+         * masAviones(patronAvionesEnemigoNuevo);
+         * }
+         * movimiento(patronAvionesEnemigoNuevo);
+         * 
+         * if (timeForBonus > 1500 && avionEnemigoBonusHashtable.isEmpty() &&
+         * powerUpArrayList.isEmpty() && cantAvionBonus == 0) {
+         * for (int i = 0; i < 5; i++) {
+         * addAvionEnemigoBonusHashtable(new AvionEnemigo("imagenes/avionEnemigo.png",
+         * (0), ((i + 10) * 10)));
+         * }
+         * 
+         * // avionesBonus.start();
+         * }
+         */
+        if (powerUpArrayList.isEmpty() && cantAvionBonus == 0) {
+            powerUp();
         }
         ArrayList<Municion> toDeleteMunicionAmiga = new ArrayList<>();
         ArrayList<Municion> toDeleteMunicionEnemiga = new ArrayList<>();
@@ -157,7 +161,6 @@ public class BattleOfMidway extends JGame {
                     toDeleteMunicionAmiga.add(municion);
                     cantEnemigosDerrotados++;
                     inScreenEnemies--;
-                    System.out.println(inScreenEnemies);
                     puntuacion = puntuacion + 500;
                 }
             }
@@ -211,10 +214,15 @@ public class BattleOfMidway extends JGame {
                     toDeleteMunicionAmiga.add(municionAmiga);
                 }
             }
+            for (Power_up power_up : powerUpArrayList) {
+                if (DetectorColiciones.detectarColicionesPowerUpBalas(municionAmiga, power_up)) {
+                    toDeleteMunicionAmiga.add(municionAmiga);
+                    toDeletePowerUp.add(power_up);
+                }
+            }
         }
         if (avionEnemigoBonusHashtable.isEmpty() && powerUpArrayList.isEmpty() && cantAvionBonus == 5) {
             powerUp();
-            // addPowerUpArrayList(new Refuerzo("imagenes/Refuerzo.png", 152, 658));
             timeForBonus = 0;
         }
 
@@ -236,6 +244,7 @@ public class BattleOfMidway extends JGame {
         }
         for (Power_up power_up : toDeletePowerUp) {
             powerUpArrayList.remove(power_up);
+            powerUp();
         }
         yamato(isBossTime);
     }
@@ -256,6 +265,7 @@ public class BattleOfMidway extends JGame {
             avionEnemigoEntry.getValue().draw(g);
         }
         for (Power_up powerUp : powerUpArrayList) {
+            powerUp.setPosition(powerUp.getX(), powerUp.getY() + 0.25);
             powerUp.draw(g);
         }
         for (Map.Entry<Integer, AvionEnemigo> avionEnemigoEntry : avionEnemigoBonusHashtable.entrySet()) {
@@ -451,19 +461,20 @@ public class BattleOfMidway extends JGame {
 
     private void powerUp() {
         Random random = new Random();
-        int randomPowerUp = 4;// random.nextInt(4) + 1;
+        int randomPowerUp = random.nextInt(4) + 1;
+        int x = random.nextInt((895 - 0) + 1) + 0;
         switch (randomPowerUp) {
             case 1:
-                addPowerUpArrayList(new Auto("imagenes/niIdea.png", 152, 658));
+                addPowerUpArrayList(new Auto("imagenes/niIdea.png", x, 50));
                 break;
             case 2:
-                addPowerUpArrayList(new Pow("imagenes/niIdea.png", 152, 658));
+                addPowerUpArrayList(new Pow("imagenes/Pow.png", x, 50));
                 break;
             case 3:
-                addPowerUpArrayList(new Super_shell("imagenes/niIdea.png", 152, 658));
+                addPowerUpArrayList(new Super_shell("imagenes/SuperShell.png", x, 50));
                 break;
             case 4:
-                addPowerUpArrayList(new Refuerzo("imagenes/niIdea.png", 152, 658));
+                addPowerUpArrayList(new Refuerzo("imagenes/Refuerzo.png", x, 50));
                 break;
         }
     }

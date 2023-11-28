@@ -10,6 +10,7 @@ public abstract class Power_up extends Bonus {
     }
 
     protected void activar(Avion_p38 avionP38) {}
+    
 
     @Override
     public void draw(Graphics2D g) {
