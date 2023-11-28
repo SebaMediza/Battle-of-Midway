@@ -18,17 +18,20 @@ public class AvionRefuerzo extends ObjetoGrafico {
 
     @Override
     public void mover(double delta, Keyboard keyboard) {
+        throw new UnsupportedOperationException("Unimplemented method 'mover'");
+    }
+    public void mover(double delta, Keyboard keyboard, double x, double y) {
         if (keyboard.isKeyPressed(KeyEvent.VK_UP)) {
-            this.setPosition(this.getX(), this.getY() - 450 * delta);
+            this.setPosition(x, y - 450 * delta);
         }
         if (keyboard.isKeyPressed(KeyEvent.VK_DOWN)) {
-            this.setPosition(this.getX(), this.getY() + 450 * delta);
+            this.setPosition(x, y + 450 * delta);
         }
         if (keyboard.isKeyPressed(KeyEvent.VK_RIGHT)) {
-            this.setPosition(this.getX() + 450 * delta, this.getY());
+            this.setPosition(x + 450 * delta, y);
         }
         if (keyboard.isKeyPressed(KeyEvent.VK_LEFT)) {
-            this.setPosition(this.getX() - 450 * delta, this.getY());
+            this.setPosition(x - 450 * delta, y);
         }
     }
 
