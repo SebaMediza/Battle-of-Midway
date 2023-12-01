@@ -56,7 +56,7 @@ public class BattleOfMidway extends JGame {
     BufferedImage kabom = null;
     Avion_p38 avionP38;
     Yamato yamato;
-    private long timeForBonus, lastTimeForBonus;
+    private long timeForBonus, lastTimeForBonus, tiempoRefuerzo, tiempoRefuerzoTotal;
     int cantAvionBonus, cantEnemigosDerrotados;
     int indexOfRemovalAvionEnemigo, indexOfRemovalAvionEnemigoBonus;
     boolean isBossTime = false;
@@ -118,22 +118,21 @@ public class BattleOfMidway extends JGame {
         timeForBonus += System.currentTimeMillis() - lastTimeForBonus;
         lastTimeForBonus = System.currentTimeMillis();
 
+        if (!isBossTime && inScreenEnemies == 0 /*
+                                                 * && !hiloPatron1.isAlive() && !hiloPatron2.isAlive()
+                                                 * && !hiloPatron3.isAlive() && !hiloPatron4.isAlive() &&
+                                                 * !hiloPatron5.isAlive()
+                                                 */) {
+            Random random = new Random();
+            patronAvionesEnemigoNuevo = random.nextInt(5) + 1;
+            while (patronAvionesEnemigoNuevo == patronAvionesEnemigoViejo) {
+                patronAvionesEnemigoNuevo = random.nextInt(5) + 1;
+            }
+            patronAvionesEnemigoViejo = patronAvionesEnemigoNuevo;
+            masAviones(patronAvionesEnemigoNuevo);
+        }
+        movimiento(patronAvionesEnemigoNuevo);
         /*
-         * if (!isBossTime && inScreenEnemies == 0 /*
-         * && !hiloPatron1.isAlive() && !hiloPatron2.isAlive()
-         * && !hiloPatron3.isAlive() && !hiloPatron4.isAlive() &&
-         * !hiloPatron5.isAlive()
-         * ) {
-         * Random random = new Random();
-         * patronAvionesEnemigoNuevo = random.nextInt(5) + 1;
-         * while (patronAvionesEnemigoNuevo == patronAvionesEnemigoViejo) {
-         * patronAvionesEnemigoNuevo = random.nextInt(5) + 1;
-         * }
-         * patronAvionesEnemigoViejo = patronAvionesEnemigoNuevo;
-         * masAviones(patronAvionesEnemigoNuevo);
-         * }
-         * movimiento(patronAvionesEnemigoNuevo);
-         * 
          * if (timeForBonus > 1500 && avionEnemigoBonusHashtable.isEmpty() &&
          * powerUpArrayList.isEmpty() && cantAvionBonus == 0) {
          * for (int i = 0; i < 5; i++) {
@@ -151,6 +150,7 @@ public class BattleOfMidway extends JGame {
         ArrayList<Municion> toDeleteMunicionEnemiga = new ArrayList<>();
         ArrayList<Misil> toDeleteMisilEnemigo = new ArrayList<>();
         ArrayList<Power_up> toDeletePowerUp = new ArrayList<>();
+        ArrayList<AvionRefuerzo> toDeleteRefuerzo = new ArrayList<>();
 
         // COLICION DE MUNICION AMIGA CON AVION ENEMIGO
         for (Municion municion : municionAmigaArrayList) {
@@ -177,6 +177,18 @@ public class BattleOfMidway extends JGame {
             municion.setPosition(municion.getX(), municion.getY() + 5);
             if (DetectorColiciones.detectarColicionMunicionEnemigaP38(municion, avionP38)) {
                 toDeleteMunicionEnemiga.add(municion);
+            }
+        }
+        for (AvionRefuerzo avionRefuerzo : refuerzo) {
+            for (Municion municion : municionEnemigaArrayList){
+                if (DetectorColiciones.detectarColicionesRefuerzoBalasEnemigas(municion, avionRefuerzo)) {
+                    toDeleteMunicionEnemiga.add(municion);
+                    avionRefuerzo.impacto();
+                    if (avionRefuerzo.getVida() <= 0) {
+                        System.out.println("murio");
+                        toDeleteRefuerzo.add(avionRefuerzo);
+                    }
+                }
             }
         }
         for (Misil misil : misilArrayList) {
@@ -246,7 +258,15 @@ public class BattleOfMidway extends JGame {
             powerUpArrayList.remove(power_up);
             powerUp();
         }
+        for (AvionRefuerzo avionRefuerzo : toDeleteRefuerzo) {
+            refuerzo.remove(avionRefuerzo);
+        }
         yamato(isBossTime);
+        if (avionP38.getEnegia() <= 0) {
+            finalScore = puntuacion;
+            this.stop();
+            // ranking.setVisible(true);
+        }
     }
 
     public void gameDraw(Graphics2D g) {
@@ -474,7 +494,7 @@ public class BattleOfMidway extends JGame {
                 addPowerUpArrayList(new Super_shell("imagenes/SuperShell.png", x, 50));
                 break;
             case 4:
-                addPowerUpArrayList(new Refuerzo("imagenes/Refuerzo.png", x, 50));
+                addPowerUpArrayList(new Refuerzo("imagenes/Refuerzo.png", 440, 500));
                 break;
         }
     }

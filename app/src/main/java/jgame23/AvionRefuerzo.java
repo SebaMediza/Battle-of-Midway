@@ -6,12 +6,16 @@ import java.awt.event.KeyEvent;
 import com.entropyinteractive.Keyboard;
 
 public class AvionRefuerzo extends ObjetoGrafico {
-
+    long time, lastTime;
     private ArmaGenerica gun = new ArmaGenerica();
+    private int vida;
 
     public AvionRefuerzo(String filename, double x, double y) {
         super(filename);
         this.setPosition(x, y);
+        time = 0;
+        lastTime = System.currentTimeMillis();
+        vida = 1;
     }
 
     public void draw(Graphics2D g) {
@@ -36,10 +40,22 @@ public class AvionRefuerzo extends ObjetoGrafico {
             int newX = (int) (this.getX() - 450 * delta);
             position.x = newX;
         }
-        if (keyboard.isKeyPressed(KeyEvent.VK_X)) {
+        time += System.currentTimeMillis() - lastTime;
+        lastTime = System.currentTimeMillis();
+        if (keyboard.isKeyPressed(KeyEvent.VK_X) && time > 200) {
             gun.disparar(this);
+            time = 0;
         }
     }
+
+    public void impacto() {
+        this.vida--;
+    }
+
+    public int getVida() {
+        return vida;
+    }
+
 
     public void mover(double delta, Keyboard keyboard, double x, double y) {
         if (keyboard.isKeyPressed(KeyEvent.VK_UP)) {

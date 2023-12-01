@@ -15,8 +15,8 @@ public class Refuerzo extends Power_up {
 
     @Override
     protected void activar(Avion_p38 avionP38) {
-        AvionRefuerzo avionRefuerzo1 = new AvionRefuerzo("imagenes/enemigo_90.png", avionP38.getX() + 35, avionP38.getY());
-        AvionRefuerzo avionRefuerzo2 = new AvionRefuerzo("imagenes/enemigo_90.png", avionP38.getX() - 35, avionP38.getY());
+        AvionRefuerzo avionRefuerzo1 = new AvionRefuerzo("imagenes/enemigo_90.png", avionP38.getX() + 75, avionP38.getY() - 50);
+        AvionRefuerzo avionRefuerzo2 = new AvionRefuerzo("imagenes/enemigo_90.png", avionP38.getX() - 45, avionP38.getY() - 50);
         BattleOfMidway.addRefuerzoArrayList(avionRefuerzo1);
         BattleOfMidway.addRefuerzoArrayList(avionRefuerzo2);
     }
