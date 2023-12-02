@@ -3,8 +3,9 @@ package jgame23;
 import com.entropyinteractive.Keyboard;
 
 public class EstrellaNinja extends Power_up{
-    public EstrellaNinja(String filename) {
+    public EstrellaNinja(String filename, int x, int y) {
         super(filename);
+        this.setPosition(x, y);
     }
 
     @Override

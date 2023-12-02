@@ -9,7 +9,7 @@ public abstract class Power_up extends Bonus {
         super(filename);
     }
 
-    protected void activar(Avion_p38 avionP38) {}
+    
     
 
     @Override

@@ -17,6 +17,7 @@ public class BattleOfMidway extends JGame {
     public static Hashtable<Integer, AvionEnemigo> avionEnemigoBonusHashtable = new Hashtable<>();
     public static ArrayList<Misil> misilArrayList = new ArrayList<>();
     public static ArrayList<Power_up> powerUpArrayList = new ArrayList<>();
+    public static ArrayList<ArmaBonus> armaBonusArrayList = new ArrayList<>();
     public static ArrayList<AvionRefuerzo> refuerzo = new ArrayList<>();
 
     public static void addRefuerzoArrayList(AvionRefuerzo avionRefuerzo) {
@@ -143,13 +144,15 @@ public class BattleOfMidway extends JGame {
          * // avionesBonus.start();
          * }
          */
-        if (powerUpArrayList.isEmpty() && cantAvionBonus == 0) {
-            powerUp();
+        if ((powerUpArrayList.isEmpty() && armaBonusArrayList.isEmpty()) && cantAvionBonus == 0) {
+            //powerUp();
+            armaUp();
         }
         ArrayList<Municion> toDeleteMunicionAmiga = new ArrayList<>();
         ArrayList<Municion> toDeleteMunicionEnemiga = new ArrayList<>();
         ArrayList<Misil> toDeleteMisilEnemigo = new ArrayList<>();
         ArrayList<Power_up> toDeletePowerUp = new ArrayList<>();
+        ArrayList<ArmaBonus> toDeleteArmaBonus = new ArrayList<>();
         ArrayList<AvionRefuerzo> toDeleteRefuerzo = new ArrayList<>();
 
         // COLICION DE MUNICION AMIGA CON AVION ENEMIGO
@@ -180,12 +183,11 @@ public class BattleOfMidway extends JGame {
             }
         }
         for (AvionRefuerzo avionRefuerzo : refuerzo) {
-            for (Municion municion : municionEnemigaArrayList){
+            for (Municion municion : municionEnemigaArrayList) {
                 if (DetectorColiciones.detectarColicionesRefuerzoBalasEnemigas(municion, avionRefuerzo)) {
                     toDeleteMunicionEnemiga.add(municion);
                     avionRefuerzo.impacto();
                     if (avionRefuerzo.getVida() <= 0) {
-                        System.out.println("murio");
                         toDeleteRefuerzo.add(avionRefuerzo);
                     }
                 }
@@ -244,6 +246,12 @@ public class BattleOfMidway extends JGame {
                 toDeletePowerUp.add(power_up);
             }
         }
+        for (ArmaBonus armaBonus : armaBonusArrayList) {
+            if (DetectorColiciones.detectarColicionesArmaBonus(avionP38, armaBonus)) {
+                armaBonus.activar(avionP38);
+                toDeleteArmaBonus.add(armaBonus);
+            }
+        }
         avionEnemigoBonusHashtable.remove(indexOfRemovalAvionEnemigo);
         for (Municion municion : toDeleteMunicionEnemiga) {
             municionEnemigaArrayList.remove(municion);
@@ -257,6 +265,10 @@ public class BattleOfMidway extends JGame {
         for (Power_up power_up : toDeletePowerUp) {
             powerUpArrayList.remove(power_up);
             powerUp();
+        }
+        for (ArmaBonus armaBonus : toDeleteArmaBonus) {
+            armaBonusArrayList.remove(armaBonus);
+            armaUp();
         }
         for (AvionRefuerzo avionRefuerzo : toDeleteRefuerzo) {
             refuerzo.remove(avionRefuerzo);
@@ -287,6 +299,10 @@ public class BattleOfMidway extends JGame {
         for (Power_up powerUp : powerUpArrayList) {
             powerUp.setPosition(powerUp.getX(), powerUp.getY() + 0.25);
             powerUp.draw(g);
+        }
+        for (ArmaBonus armaBonus : armaBonusArrayList) {
+            armaBonus.setPosition(armaBonus.getX(), armaBonus.getY() + 0.25);
+            armaBonus.draw(g);
         }
         for (Map.Entry<Integer, AvionEnemigo> avionEnemigoEntry : avionEnemigoBonusHashtable.entrySet()) {
             avionEnemigoEntry.getValue().draw(g);
@@ -494,7 +510,26 @@ public class BattleOfMidway extends JGame {
                 addPowerUpArrayList(new Super_shell("imagenes/SuperShell.png", x, 50));
                 break;
             case 4:
-                addPowerUpArrayList(new Refuerzo("imagenes/Refuerzo.png", 440, 500));
+                addPowerUpArrayList(new EstrellaNinja("imagenes/Estrella.png", x, 50));
+        }
+    }
+
+    private void armaUp() {
+        Random random = new Random();
+        int randomPowerUp = 2;//random.nextInt(4) + 1;
+        int x = random.nextInt((895 - 0) + 1) + 0;
+        switch (randomPowerUp) {
+            case 1:
+                armaBonusArrayList.add(new Escopeta("imagenes/escopeta.png", x, 50));
+                break;
+            case 2:
+                armaBonusArrayList.add(new Ametralladora("imagenes/ametralladora.png", x, 50));
+                break;
+            case 3:
+                armaBonusArrayList.add(new Laser("imagenes/laser.png", x, 50));
+                break;
+            case 4:
+                armaBonusArrayList.add(new Refuerzo("imagenes/Refuerzo.png", 440, 500));
                 break;
         }
     }

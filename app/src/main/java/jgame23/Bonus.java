@@ -8,6 +8,8 @@ public abstract class Bonus extends ObjetoGrafico {
         super(filename);
     }
 
+    protected void activar(Avion_p38 avionP38) {}
+
     @Override
     public void draw(Graphics2D g) {
         super.draw(g);

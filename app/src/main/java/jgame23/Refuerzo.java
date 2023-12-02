@@ -2,7 +2,7 @@ package jgame23;
 
 import com.entropyinteractive.Keyboard;
 
-public class Refuerzo extends Power_up {
+public class Refuerzo extends ArmaBonus {
     public Refuerzo(String filename, int x, int y) {
         super(filename);
         this.setPosition(x, y);
@@ -22,7 +22,7 @@ public class Refuerzo extends Power_up {
     }
 
     @Override
-    public void mover(double delta, Keyboard keyboard) { // TODO Auto-generated method stub
+    public void mover(double delta, Keyboard keyboard) {
         throw new UnsupportedOperationException("Unimplemented method 'mover'");
     }
 }

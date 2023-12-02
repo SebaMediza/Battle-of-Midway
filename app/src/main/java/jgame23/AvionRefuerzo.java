@@ -74,7 +74,6 @@ public class AvionRefuerzo extends ObjetoGrafico {
 
     @Override
     public double getCoordenadas() {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getCoordenadas'");
     }
 

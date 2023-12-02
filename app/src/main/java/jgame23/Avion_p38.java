@@ -26,12 +26,17 @@ class Avion_p38 extends ObjetoGrafico {
     private boolean inclinadoIzquierda = false;
     private boolean inclinadoDerecha = false;
     private boolean auto = false;
+    private boolean ametralladoraActivada = false;
     BufferedImage imagenincliizqui;
     BufferedImage imageninclidere;
     long startAuto, currentTimeAuto;
 
     public void setAuto(boolean auto) {
         this.auto = auto;
+        startAuto = System.currentTimeMillis();
+    }
+    public void setAmetralladora(boolean ametralladora) {
+        this.ametralladoraActivada = ametralladora;
         startAuto = System.currentTimeMillis();
     }
 
@@ -49,7 +54,8 @@ class Avion_p38 extends ObjetoGrafico {
         time = 0;
         lastTime = System.currentTimeMillis();
     }
-    public Avion_p38(String file , double x, double y) {
+
+    public Avion_p38(String file, double x, double y) {
         super(file);
         try {
             this.setImagen(ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream(file))));
@@ -138,20 +144,28 @@ class Avion_p38 extends ObjetoGrafico {
         time += System.currentTimeMillis() - lastTime;
         lastTime = System.currentTimeMillis();
         if (keyboard.isKeyPressed(KeyEvent.VK_X) && time > 200) {
-            if (!keyboard.isKeyPressed(KeyEvent.VK_Z) && time > 200) {
-                if (auto){
+            if (auto) {
+                currentTimeAuto = System.currentTimeMillis() - startAuto;
+                if (currentTimeAuto > 5000) {
+                    setAuto(false);
+                    System.out.println("Shell desactivado");
+                }
+                autoDisparar();
+                time = 0;
+            } else {
+                if (ametralladoraActivada) {
+                    System.out.println("Disparo ametralladora");
                     currentTimeAuto = System.currentTimeMillis() - startAuto;
                     if (currentTimeAuto > 5000) {
-                        setAuto(false);
-                        System.out.println("Shell desactivado");
+                        setAmetralladora(false);
+                        System.out.println("Amertralladora desactivado");
                     }
-                    autoDisparar();
+                    dispararAmetralladora();
                     time = 0;
-                }else {
+                } else {
                     disparar();
                     time = 0;
                 }
-
             }
         }
         // Esc fin del juego
@@ -167,8 +181,14 @@ class Avion_p38 extends ObjetoGrafico {
     public void disparar() {
         gun.disparar(this);
     }
+
     public void autoDisparar() {
         Thread t = new Thread(r);
+        t.start();
+    }
+
+    public void dispararAmetralladora() {
+        Thread t = new Thread(ametralladora);
         t.start();
     }
 
@@ -210,5 +230,16 @@ class Avion_p38 extends ObjetoGrafico {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    };
+    Runnable ametralladora = () -> {
+        Municion bala = new Municion("imagenes/municion4.png");
+        Municion balaDere = new Municion("imagenes/municion4.png");
+        Municion balaIzqi = new Municion("imagenes/municion4.png");
+        BattleOfMidway.addMunicionAmigaArrayList(bala);
+        BattleOfMidway.addMunicionAmigaArrayList(balaDere);
+        BattleOfMidway.addMunicionAmigaArrayList(balaIzqi);
+        bala.setPosition(this.getX() + 18, this.getY());
+        balaDere.setPosition(this.getX() + 55, this.getY());
+        balaIzqi.setPosition(this.getX() - 35, this.getY());
     };
 }
