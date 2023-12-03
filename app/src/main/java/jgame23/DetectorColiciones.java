@@ -33,6 +33,18 @@ public abstract class DetectorColiciones extends Rectangle {
         Rectangle objeto2 = new Rectangle(0,  5, Toolkit.getDefaultToolkit().getScreenSize().width, 25);
         return objeto1.intersects(objeto2);
     }
+
+    public static boolean detectarColicionAvionEnemigoBordePantallaDerecho(AvionEnemigo avionEnemigo){
+        Rectangle objeto1 = new Rectangle((int) avionEnemigo.getX(), (int) avionEnemigo.getY(), (int) avionEnemigo.getHeigth(), (int) avionEnemigo.getWidth());
+        Rectangle objeto2 = new Rectangle(945,  5, Toolkit.getDefaultToolkit().getScreenSize().width, 25);
+        return objeto1.intersects(objeto2);
+    }
+    public static boolean detectarColicionAvionEnemigoBordePantallaIzquierdo(AvionEnemigo avionEnemigo){
+        Rectangle objeto1 = new Rectangle((int) avionEnemigo.getX(), (int) avionEnemigo.getY(), (int) avionEnemigo.getHeigth(), (int) avionEnemigo.getWidth());
+        Rectangle objeto2 = new Rectangle(0,  5, Toolkit.getDefaultToolkit().getScreenSize().width, 25);
+        return objeto1.intersects(objeto2);
+    }
+    
     public static boolean detectarColicionMunicionAmigaMisilEnemigo(Municion municion, Misil misil){
         Rectangle objeto1 = new Rectangle((int) misil.getX(), (int) misil.getY(), (int) misil.getHeigth(), (int) misil.getWidth());
         Rectangle objeto2 = new Rectangle((int) municion.getX(), (int) municion.getY(), (int) municion.getHeigth(), (int) municion.getWidth());

@@ -3,8 +3,9 @@ package jgame23;
 import com.entropyinteractive.Keyboard;
 
 public class BarcoEnemigo extends Enemigo{
-    public BarcoEnemigo(String filename) {
+    public BarcoEnemigo(String filename, double x, double y) {
         super(filename);
+        this.setPosition(x, y);
     }
 
     @Override

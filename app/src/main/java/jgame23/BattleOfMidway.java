@@ -18,6 +18,7 @@ public class BattleOfMidway extends JGame {
     public static ArrayList<Misil> misilArrayList = new ArrayList<>();
     public static ArrayList<Power_up> powerUpArrayList = new ArrayList<>();
     public static ArrayList<ArmaBonus> armaBonusArrayList = new ArrayList<>();
+    public static ArrayList<BarcoEnemigo> barcoEnemigos = new ArrayList<>();
     public static ArrayList<AvionRefuerzo> refuerzo = new ArrayList<>();
 
     public static void addRefuerzoArrayList(AvionRefuerzo avionRefuerzo) {
@@ -57,7 +58,7 @@ public class BattleOfMidway extends JGame {
     BufferedImage kabom = null;
     Avion_p38 avionP38;
     Yamato yamato;
-    private long timeForBonus, lastTimeForBonus, tiempoRefuerzo, tiempoRefuerzoTotal;
+    private long timeForBonus, lastTimeForBonus;
     int cantAvionBonus, cantEnemigosDerrotados;
     int indexOfRemovalAvionEnemigo, indexOfRemovalAvionEnemigoBonus;
     boolean isBossTime = false;
@@ -77,8 +78,8 @@ public class BattleOfMidway extends JGame {
                     Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("imagenes/fondo3.png")));
             imagenNubes = ImageIO.read(
                     Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("imagenes/nubes2.png")));
-            // barquitos =
-            // ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("imagenes/barcos.png")));
+            barquitos = ImageIO.read(
+                    Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("imagenes/barquito.png")));
             // kabom =
             // ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("imagenes/explocion.gif")));
             yamato = new Yamato("imagenes/Proyecto nuevo.png");
@@ -121,9 +122,11 @@ public class BattleOfMidway extends JGame {
         lastTimeForBonus = System.currentTimeMillis();
 
         if (!isBossTime && inScreenEnemies == 0
-                && !hiloPatron1.isAlive() && !hiloPatron2.isAlive()
-                && !hiloPatron3.isAlive() && !hiloPatron4.isAlive() &&
-                !hiloPatron5.isAlive()) {
+        /*
+         * && !hiloPatron1.isAlive() && !hiloPatron2.isAlive()
+         * && !hiloPatron3.isAlive() && !hiloPatron4.isAlive() &&
+         * !hiloPatron5.isAlive()
+         */) {
             Random random = new Random();
             patronAvionesEnemigoNuevo = random.nextInt(5) + 1;
             while (patronAvionesEnemigoNuevo == patronAvionesEnemigoViejo) {
@@ -131,28 +134,37 @@ public class BattleOfMidway extends JGame {
             }
             patronAvionesEnemigoViejo = patronAvionesEnemigoNuevo;
             masAviones(patronAvionesEnemigoNuevo);
+            // barcos.start();
         }
         movimiento(patronAvionesEnemigoNuevo);
-        /*
-         * if (timeForBonus > 1500 && avionEnemigoBonusHashtable.isEmpty() &&
-         * powerUpArrayList.isEmpty() && cantAvionBonus == 0) {
-         * for (int i = 0; i < 5; i++) {
-         * addAvionEnemigoBonusHashtable(new AvionEnemigo("imagenes/avionEnemigo.png",
-         * (0), ((i + 10) * 10)));
-         * }
-         * 
-         * // avionesBonus.start();
-         * }
-         */
-        if ((powerUpArrayList.isEmpty() && armaBonusArrayList.isEmpty()) && cantAvionBonus == 0) {
-            // powerUp();
-            armaUp();
+
+        if (timeForBonus > 15000 && avionEnemigoBonusHashtable.isEmpty() && powerUpArrayList.isEmpty()
+                && armaBonusArrayList.isEmpty() && !avionesBonus.isAlive()) {
+            for (int i = 0; i < 5; i++) {
+                addAvionEnemigoBonusHashtable(new AvionEnemigo("imagenes/avionEnemigo.png",
+                        (0), ((i + 10) * 10)));
+            }
         }
+        if ((powerUpArrayList.isEmpty() && armaBonusArrayList.isEmpty()) && timeForBonus > 1500 && cantAvionBonus > 5) {
+            System.out.println("condiciones para bonus cumplidas");
+            Random random = new Random();
+            int x = random.nextInt(2) + 1;
+            if (x == 1) {
+                powerUp();
+            } else {
+                armaUp();
+            }
+            timeForBonus = 0;
+            cantAvionBonus = 0;
+        }
+
         ArrayList<Municion> toDeleteMunicionAmiga = new ArrayList<>();
         ArrayList<Municion> toDeleteMunicionEnemiga = new ArrayList<>();
         ArrayList<Misil> toDeleteMisilEnemigo = new ArrayList<>();
         ArrayList<Power_up> toDeletePowerUp = new ArrayList<>();
+        ArrayList<Power_up> toDeleteActivatedPowerUp = new ArrayList<>();
         ArrayList<ArmaBonus> toDeleteArmaBonus = new ArrayList<>();
+        ArrayList<ArmaBonus> toDeleteActivatedArmaBonus = new ArrayList<>();
         ArrayList<AvionRefuerzo> toDeleteRefuerzo = new ArrayList<>();
 
         // COLICION DE MUNICION AMIGA CON AVION ENEMIGO
@@ -206,7 +218,7 @@ public class BattleOfMidway extends JGame {
                 toDeleteMisilEnemigo.add(misil);
             }
         }
-        if (cantEnemigosDerrotados > 1500 && inScreenEnemies == 0) {
+        if (cantEnemigosDerrotados > 1500) {
             isBossTime = true;
         }
         // BONUS GENERADOS POR MATAR TODOS LOS AVIONCITOS
@@ -215,6 +227,7 @@ public class BattleOfMidway extends JGame {
             avionEnemigoEntry.getValue().autoMoverAvionBonus();
             if (DetectorColiciones.detectarColicionesP38AvionBonus(avionP38, avionEnemigoEntry.getValue())) {
                 indexOfRemovalAvionEnemigo = avionEnemigoEntry.getKey();
+                cantAvionBonus++;
             }
         }
         avionEnemigoBonusHashtable.remove(indexOfRemovalAvionEnemigo);
@@ -224,6 +237,7 @@ public class BattleOfMidway extends JGame {
                 if (DetectorColiciones.detectarColicionMunicionAmigaAvionEnemigo(municionAmiga,
                         avionEnemigoEntry.getValue())) {
                     cantAvionBonus++;
+                    System.out.println(cantAvionBonus);
                     indexOfRemovalAvionEnemigo = avionEnemigoEntry.getKey();
                     toDeleteMunicionAmiga.add(municionAmiga);
                 }
@@ -235,21 +249,17 @@ public class BattleOfMidway extends JGame {
                 }
             }
         }
-        if (avionEnemigoBonusHashtable.isEmpty() && powerUpArrayList.isEmpty() && cantAvionBonus == 5) {
-            powerUp();
-            timeForBonus = 0;
-        }
-
         for (Power_up power_up : powerUpArrayList) {
             if (DetectorColiciones.detectarColicionesPowerUp(avionP38, power_up)) {
                 power_up.activar(avionP38);
-                toDeletePowerUp.add(power_up);
+                System.out.println("Power up activado");
+                toDeleteActivatedPowerUp.add(power_up);
             }
         }
         for (ArmaBonus armaBonus : armaBonusArrayList) {
             if (DetectorColiciones.detectarColicionesArmaBonus(avionP38, armaBonus)) {
                 armaBonus.activar(avionP38);
-                toDeleteArmaBonus.add(armaBonus);
+                toDeleteActivatedArmaBonus.add(armaBonus);
             }
         }
         avionEnemigoBonusHashtable.remove(indexOfRemovalAvionEnemigo);
@@ -269,6 +279,12 @@ public class BattleOfMidway extends JGame {
         for (ArmaBonus armaBonus : toDeleteArmaBonus) {
             armaBonusArrayList.remove(armaBonus);
             armaUp();
+        }
+        for (ArmaBonus armaBonus : toDeleteActivatedArmaBonus) {
+            armaBonusArrayList.remove(armaBonus);
+        }
+        for (Power_up power_up : toDeleteActivatedPowerUp) {
+            powerUpArrayList.remove(power_up);
         }
         for (AvionRefuerzo avionRefuerzo : toDeleteRefuerzo) {
             refuerzo.remove(avionRefuerzo);
@@ -340,130 +356,131 @@ public class BattleOfMidway extends JGame {
     }
 
     private void masAviones(int patron) {
+        Random r = new Random();
+        int cant = 5;// (r.nextInt(15) + 1);
         switch (patron) {
-
-            case 1:
-                hiloPatron1.start();
-                break;
-            case 2:
-                hiloPatron2.start();
-                break;
-            case 3:
-                hiloPatron3.start();
-                break;
-            case 4:
-                hiloPatron4.start();
-                break;
-            case 5:
-                hiloPatron5.start();
-                break;
-
             /*
              * case 1:
-             * for (int i = 0; i < 5; i++) {
-             * addAvionEnemigoHashtable(
-             * new AvionEnemigo("imagenes/Enemigo.png", ((inScreenEnemies + 5) * 60), 15));
-             * inScreenEnemies++;
-             * }
+             * hiloPatron1.start();
              * break;
              * case 2:
-             * for (int i = 0; i < 10; i++) {
-             * addAvionEnemigoHashtable(
-             * new AvionEnemigo("imagenes/enemigo_195.png", 0, (inScreenEnemies + 5) * 60));
-             * inScreenEnemies++;
-             * }
+             * hiloPatron2.start();
              * break;
              * case 3:
-             * for (int i = 0; i < 5; i++) {
-             * addAvionEnemigoHashtable(
-             * new AvionEnemigo("imagenes/Enemigo.png", (inScreenEnemies + 10) * 40, i *
-             * 10));
-             * inScreenEnemies++;
-             * }
+             * hiloPatron3.start();
              * break;
              * case 4:
-             * for (int i = 0; i < 5; i++) {
-             * addAvionEnemigoHashtable(
-             * new AvionEnemigo("imagenes/enemigo_315.png", inScreenEnemies * 30,
-             * inScreenEnemies * 30));
-             * inScreenEnemies++;
-             * }
+             * hiloPatron4.start();
              * break;
              * case 5:
-             * for (int i = 0; i < 5; i++) {
-             * addAvionEnemigoHashtable(new AvionEnemigo("imagenes/enemigo_195.png",
-             * (945 - (inScreenEnemies * 30)), inScreenEnemies * 30));
-             * inScreenEnemies++;
-             * }
+             * hiloPatron5.start();
              * break;
              */
 
+            case 1:
+                for (int i = 0; i < cant; i++) {
+                    addAvionEnemigoHashtable(
+                            new AvionEnemigo("imagenes/Enemigo.png", ((inScreenEnemies + 5) * 60), 15));
+                    inScreenEnemies++;
+                }
+                break;
+            case 2:
+                for (int i = 0; i < cant; i++) {
+                    addAvionEnemigoHashtable(
+                            new AvionEnemigo("imagenes/enemigo_0.png", 0, (inScreenEnemies + 5) * 60));
+                    inScreenEnemies++;
+                }
+                break;
+            case 3:
+                for (int i = 0; i < cant; i++) {
+                    addAvionEnemigoHashtable(
+                            new AvionEnemigo("imagenes/Enemigo.png", (inScreenEnemies + 10) * 40, i *
+                                    10));
+                    inScreenEnemies++;
+                }
+                break;
+            case 4:
+                for (int i = 0; i < cant; i++) {
+                    addAvionEnemigoHashtable(
+                            new AvionEnemigo("imagenes/enemigo_315.png", inScreenEnemies * 30,
+                                    inScreenEnemies * 30));
+                    inScreenEnemies++;
+                }
+                break;
+            case 5:
+                for (int i = 0; i < cant; i++) {
+                    addAvionEnemigoHashtable(new AvionEnemigo("imagenes/enemigo_195.png",
+                            (945 - (inScreenEnemies * 30)), inScreenEnemies * 30));
+                    inScreenEnemies++;
+                }
+                break;
         }
     }
-
-    Runnable patron1 = () -> {
-        try {
-            for (int i = 0; i < 5; i++) {
-                // Thread.sleep(500);
-                addAvionEnemigoHashtable(
-                        new AvionEnemigo("imagenes/Enemigo.png", ((i + 5) * 60), 15));
-                inScreenEnemies++;
-                System.out.println(inScreenEnemies);
-            }
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-    };
-
-    Runnable patron2 = () -> {
-        try {
-            for (int i = 0; i < 5; i++) {
-                // Thread.sleep(500);
-                addAvionEnemigoHashtable(
-                        new AvionEnemigo("imagenes/enemigo_195.png", 0, (i + 5) * 60));
-                inScreenEnemies++;
-            }
-        } catch (Exception e) {
-        }
-    };
-    Runnable patron3 = () -> {
-        try {
-            for (int i = 0; i < 5; i++) {
-                // Thread.sleep(500);
-                addAvionEnemigoHashtable(
-                        new AvionEnemigo("imagenes/Enemigo.png", (i + 10) * 40, i * 10));
-                inScreenEnemies++;
-            }
-        } catch (Exception e) {
-        }
-    };
-    Runnable patron4 = () -> {
-        try {
-            for (int i = 0; i < 5; i++) {
-                // Thread.sleep(500);
-                addAvionEnemigoHashtable(
-                        new AvionEnemigo("imagenes/enemigo_315.png", i * 30, i * 30));
-                inScreenEnemies++;
-            }
-        } catch (Exception e) {
-        }
-    };
-    Runnable patron5 = () -> {
-        try {
-            for (int i = 0; i < 5; i++) {
-                // Thread.sleep(500);
-                addAvionEnemigoHashtable(new AvionEnemigo("imagenes/enemigo_195.png",
-                        (945 - (i * 30)), i * 30));
-                inScreenEnemies++;
-            }
-        } catch (Exception e) {
-        }
-    };
-    Thread hiloPatron1 = new Thread(patron1);
-    Thread hiloPatron2 = new Thread(patron2);
-    Thread hiloPatron3 = new Thread(patron3);
-    Thread hiloPatron4 = new Thread(patron4);
-    Thread hiloPatron5 = new Thread(patron5);
+    /*
+     * Runnable patron1 = () -> {
+     * try {
+     * for (int i = 0; i < 5; i++) {
+     * // Thread.sleep(500);
+     * addAvionEnemigoHashtable(
+     * new AvionEnemigo("imagenes/Enemigo.png", ((i + 5) * 60), 15));
+     * inScreenEnemies++;
+     * System.out.println(inScreenEnemies);
+     * }
+     * } catch (Exception e) {
+     * System.out.println(e);
+     * }
+     * };
+     * 
+     * Runnable patron2 = () -> {
+     * try {
+     * for (int i = 0; i < 5; i++) {
+     * // Thread.sleep(500);
+     * addAvionEnemigoHashtable(
+     * new AvionEnemigo("imagenes/enemigo_195.png", 0, (i + 5) * 60));
+     * inScreenEnemies++;
+     * }
+     * } catch (Exception e) {
+     * }
+     * };
+     * Runnable patron3 = () -> {
+     * try {
+     * for (int i = 0; i < 5; i++) {
+     * // Thread.sleep(500);
+     * addAvionEnemigoHashtable(
+     * new AvionEnemigo("imagenes/Enemigo.png", (i + 10) * 40, i * 10));
+     * inScreenEnemies++;
+     * }
+     * } catch (Exception e) {
+     * }
+     * };
+     * Runnable patron4 = () -> {
+     * try {
+     * for (int i = 0; i < 5; i++) {
+     * // Thread.sleep(500);
+     * addAvionEnemigoHashtable(
+     * new AvionEnemigo("imagenes/enemigo_315.png", i * 30, i * 30));
+     * inScreenEnemies++;
+     * }
+     * } catch (Exception e) {
+     * }
+     * };
+     * Runnable patron5 = () -> {
+     * try {
+     * for (int i = 0; i < 5; i++) {
+     * // Thread.sleep(500);
+     * addAvionEnemigoHashtable(new AvionEnemigo("imagenes/enemigo_195.png",
+     * (945 - (i * 30)), i * 30));
+     * inScreenEnemies++;
+     * }
+     * } catch (Exception e) {
+     * }
+     * };
+     * Thread hiloPatron1 = new Thread(patron1);
+     * Thread hiloPatron2 = new Thread(patron2);
+     * Thread hiloPatron3 = new Thread(patron3);
+     * Thread hiloPatron4 = new Thread(patron4);
+     * Thread hiloPatron5 = new Thread(patron5);
+     */
 
     private void movimiento(int patron) {
         switch (patron) {
@@ -541,7 +558,23 @@ public class BattleOfMidway extends JGame {
                 addAvionEnemigoBonusHashtable(new AvionEnemigo("imagenes/avionEnemigo.png", (0), ((i + 10) * 10)));
             }
         } catch (Exception e) {
+            System.out.println(e);
         }
     };
     Thread avionesBonus = new Thread(avionBonus);
+
+    Runnable barcosEnemigos = () -> {
+        try {
+            Random random = new Random();
+            for (int i = 0; i < 5; i++) {
+                int x = random.nextInt((895 - 0) + 1) + 0;
+                int y = random.nextInt(Toolkit.getDefaultToolkit().getScreenSize().height - 37);
+                Thread.sleep(500);
+                barcoEnemigos.add(new BarcoEnemigo("imagenes/barquito.png", x, y));
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    };
+    Thread barcos = new Thread(barcosEnemigos);
 }
