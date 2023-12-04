@@ -20,6 +20,7 @@ public class BattleOfMidway extends JGame {
     public static ArrayList<ArmaBonus> armaBonusArrayList = new ArrayList<>();
     public static ArrayList<BarcoEnemigo> barcoEnemigos = new ArrayList<>();
     public static ArrayList<AvionRefuerzo> refuerzo = new ArrayList<>();
+    public static ArrayList<Torreta> torretas = new ArrayList<>();
 
     public static void addRefuerzoArrayList(AvionRefuerzo avionRefuerzo) {
         refuerzo.add(avionRefuerzo);
@@ -51,19 +52,17 @@ public class BattleOfMidway extends JGame {
         indexAvionBonus++;
     }
 
-    // Ranking ranking = new Ranking();
+    Ranking ranking = new Ranking();
     public static int finalScore = 0;
     private int offSetY, posicionNubesY, posicionBarcosY;
-    BufferedImage img_fondo, imagenNubes, barquitos;
-    BufferedImage kabom = null;
-    Avion_p38 avionP38;
-    Yamato yamato;
+    private BufferedImage img_fondo, imagenNubes, barquitos, kabom = null;
+    private Avion_p38 avionP38;
+    private Yamato yamato;
     private long timeForBonus, lastTimeForBonus;
-    int cantAvionBonus, cantEnemigosDerrotados;
-    int indexOfRemovalAvionEnemigo, indexOfRemovalAvionEnemigoBonus;
-    boolean isBossTime = false;
-    int inScreenEnemies = 0, temp = 150;
-    Thread hiloAviones;
+    private int cantAvionBonus, cantEnemigosDerrotados = 25;
+    private int indexOfRemovalAvionEnemigo, indexOfRemovalAvionEnemigoBonus;
+    private boolean isBossTime = false;
+    private int inScreenEnemies = 0, temp = 150;
 
     public BattleOfMidway() {
         super("Battle Of Midway", 945, Toolkit.getDefaultToolkit().getScreenSize().height - 37);
@@ -82,8 +81,7 @@ public class BattleOfMidway extends JGame {
                     Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("imagenes/barquito.png")));
             // kabom =
             // ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("imagenes/explocion.gif")));
-            yamato = new Yamato("imagenes/Proyecto nuevo.png");
-            yamato.setPosition(0, -1900);
+            yamato = new Yamato("imagenes/Proyecto nuevo.png", 0, -1900);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -166,6 +164,7 @@ public class BattleOfMidway extends JGame {
         ArrayList<ArmaBonus> toDeleteArmaBonus = new ArrayList<>();
         ArrayList<ArmaBonus> toDeleteActivatedArmaBonus = new ArrayList<>();
         ArrayList<AvionRefuerzo> toDeleteRefuerzo = new ArrayList<>();
+        ArrayList<Torreta> toDeleteTorreta = new ArrayList<>();
 
         // COLICION DE MUNICION AMIGA CON AVION ENEMIGO
         for (Municion municion : municionAmigaArrayList) {
@@ -184,6 +183,19 @@ public class BattleOfMidway extends JGame {
             }
             avionEnemigoHashtable.remove(indexOfRemovalAvionEnemigo);
             indexOfRemovalAvionEnemigo = 0;
+        }
+        for (Torreta torreta : torretas) {
+            torreta.disparar();
+            for (Municion municion : municionAmigaArrayList) {
+                if (DetectorColiciones.detectarColicionMuniAmiTorreta(municion, torreta)) {
+                    toDeleteMunicionAmiga.add(municion);
+                    torreta.setVida(torreta.getVida() - 5);
+                    if (torreta.getVida() == 0) {
+                        toDeleteTorreta.add(torreta);
+                        System.out.println("Torreta destruida");
+                    }
+                }
+            }
         }
         for (Map.Entry<Integer, AvionEnemigo> avionEnemigoEntry : avionEnemigoHashtable.entrySet()) {
             avionEnemigoEntry.getValue().disparar();
@@ -218,7 +230,7 @@ public class BattleOfMidway extends JGame {
                 toDeleteMisilEnemigo.add(misil);
             }
         }
-        if (cantEnemigosDerrotados > 1500) {
+        if (cantEnemigosDerrotados > 20) {
             isBossTime = true;
         }
         // BONUS GENERADOS POR MATAR TODOS LOS AVIONCITOS
@@ -289,6 +301,9 @@ public class BattleOfMidway extends JGame {
         for (AvionRefuerzo avionRefuerzo : toDeleteRefuerzo) {
             refuerzo.remove(avionRefuerzo);
         }
+        for (Torreta torreta : toDeleteTorreta) {
+            torretas.remove(torreta);
+        }
         yamato(isBossTime);
         if (avionP38.getEnegia() <= 0) {
             finalScore = puntuacion;
@@ -329,6 +344,9 @@ public class BattleOfMidway extends JGame {
         for (AvionRefuerzo avionRefuerzo : refuerzo) {
             avionRefuerzo.draw(g);
         }
+        for (Torreta torreta : torretas) {
+            torreta.draw(g);
+        }
         g.setColor(Color.black);
         g.drawString(String.valueOf(avionP38.getEnegia()), 480, 50);
         g.drawString(String.valueOf(puntuacion), 5, 50);
@@ -341,7 +359,7 @@ public class BattleOfMidway extends JGame {
     public void yamato(Boolean isBossTime) {
         if (isBossTime) {
             yamato.updatePosition();
-            yamato.dispararMisil(yamato.getX() + 500, yamato.getY() + 900);
+            yamato.disparar();
         }
     }
 

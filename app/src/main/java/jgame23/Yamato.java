@@ -2,41 +2,40 @@ package jgame23;
 
 import com.entropyinteractive.Keyboard;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.util.Objects;
 
 public class Yamato extends Enemigo{
-    BufferedImage mainTurret;
+    private Torreta torreta1, torreta2, torreta3, torreta4, mainTurret;
+    private int vida;
 
-    public Yamato(String filename) {
+    public Yamato(String filename, int x, int y) {
         super(filename);
-        try{
-            mainTurret = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("imagenes/0.png")));
-        }catch (IOException exception){
-            System.out.println(exception.getMessage());
-        }
+        this.setPosition(x, y);
+        mainTurret = new Torreta("imagenes/0.png", (int)this.x + 500, (int)this.y - 1000);
+        torreta1 = new Torreta("imagenes/5.png", (int)this.x + 650, (int)this.y - 1000);
+        torreta2 = new Torreta("imagenes/5.png", (int)this.x + 650, (int)this.y - 800);
+        torreta4 = new Torreta("imagenes/13.png", (int)this.x + 350, (int)this.y - 1000);
+        torreta3 = new Torreta("imagenes/13.png", (int)this.x + 350, (int)this.y - 800);
+        BattleOfMidway.torretas.add(mainTurret);
+        BattleOfMidway.torretas.add(torreta1);
+        BattleOfMidway.torretas.add(torreta2);
+        BattleOfMidway.torretas.add(torreta3);
+        BattleOfMidway.torretas.add(torreta4);
+        vida = 1000;
     }
 
     @Override
     public void draw(Graphics2D g) {
         super.draw(g);
-        g.drawImage(mainTurret,(int) this.getX() + 500, (int) this.getY() + 900,null);
-    }
-
-    public void disparar(){
-        super.disparar();
-    }
-
-//    @Override
-    protected void dispararMisil(double x, double y) {
-        super.dispararMisil(x, y);
     }
 
     public void updatePosition() {
         this.setPosition(position.x, position.y + 2/*0.50*/);
+        mainTurret.setPosition(mainTurret.position.x, mainTurret.position.y + 2/*0.50*/);
+        torreta1.setPosition(torreta1.position.x, torreta1.position.y + 2/*0.50*/);
+        torreta2.setPosition(torreta2.position.x, torreta2.position.y + 2/*0.50*/);
+        torreta3.setPosition(torreta3.position.x, torreta3.position.y + 2/*0.50*/);
+        torreta4.setPosition(torreta4.position.x, torreta4.position.y + 2/*0.50*/);
     }
 
     @Override
@@ -45,5 +44,16 @@ public class Yamato extends Enemigo{
     @Override
     public double getCoordenadas() {
         return 0;
+    }
+
+    public int getVida() {
+        return vida;
+    }
+
+    public void setVida(int vida) {
+        this.vida = vida;
+        if (vida <= 0) {
+            BattleOfMidway.torretas.clear();
+        }
     }
 }

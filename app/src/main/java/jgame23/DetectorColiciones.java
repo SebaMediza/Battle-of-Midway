@@ -65,6 +65,11 @@ public abstract class DetectorColiciones extends Rectangle {
         }
         return colicion;
     }
+    public static boolean detectarColicionMuniAmiTorreta(Municion municionAmiga, Torreta torreta){
+        Rectangle objeto1 = new Rectangle((int) municionAmiga.getX(), (int) municionAmiga.getY(), (int) municionAmiga.getHeigth(), (int) municionAmiga.getWidth());
+        Rectangle objeto2 = new Rectangle((int) torreta.getX(), (int) torreta.getY(), (int) torreta.getHeigth(), (int) torreta.getWidth());
+        return objeto1.intersects(objeto2);
+    }
 
     public static boolean detectarColicionesPowerUp(Avion_p38 avionP38, Power_up powerUp){
         Rectangle objeto1 = new Rectangle((int) avionP38.getX(), (int) avionP38.getY(), (int) avionP38.getHeigth(), (int) avionP38.getWidth());
