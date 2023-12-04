@@ -16,8 +16,8 @@ public abstract class Enemigo extends ObjetoGrafico{
     private ArmaGenerica gun = new ArmaGenerica();
     protected int cantEnergia;
     protected Color colorEnemigo;
-    protected double x;
-    protected double y;
+    /* protected double x;
+    protected double y; */
     protected static double speed;
     protected boolean movingDown;
     protected int maxY;
@@ -28,7 +28,7 @@ public abstract class Enemigo extends ObjetoGrafico{
         if(movingDown){
             y += speed * delta;
             if(y >= (getHeight() - imagen.getHeight())){
-                y = getHeight() - imagen.getHeight();
+                y = (int) getHeight() - imagen.getHeight();
                 movingDown = false;
             }
         } else {

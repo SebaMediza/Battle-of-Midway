@@ -8,12 +8,14 @@ import java.util.*;
 
 /* 
  * DUDAS PARA LA CLASE
- * - ¿Como hacer la configuración?
+ * - ¿Como hacer la configuración? SQLite
  * - Orientación para encarar los ataque especiales
- * - Corregir el disparo del P38
- * - Corregir el disparo y la colición de las torretas del Yamato
- * - Barra de vida
- * - Misiles
+ * - Corregir el disparo del P38 - flag
+ * - Corregir el disparo y la colición de las torretas del Yamato - vector
+ * - Barra de vida - imagenes + numero de vida
+ * - Misiles - arregaldo
+ * - hashtable para las torreras
+ * - arreglar UML
  */
 
 public class BattleOfMidway extends JGame {
@@ -142,12 +144,12 @@ public class BattleOfMidway extends JGame {
         }
         movimiento(patronAvionesEnemigoNuevo);
 
-        if (timeForBonus > 15000 && avionEnemigoBonusHashtable.isEmpty() && powerUpArrayList.isEmpty()
-                && armaBonusArrayList.isEmpty() && !avionesBonus.isAlive()) {
-            for (int i = 0; i < 5; i++) {
+        if (timeForBonus > 15000 /* && avionEnemigoBonusHashtable.isEmpty() && powerUpArrayList.isEmpty()
+                && armaBonusArrayList.isEmpty() */) {
+            /* for (int i = 0; i < 5; i++) {
                 addAvionEnemigoBonusHashtable(new AvionEnemigo("imagenes/avionEnemigo.png",
                         (0), ((i + 10) * 10)));
-            }
+            } */
         }
         if (!isBossTime && barcoEnemigos.isEmpty()) {
             Random random = new Random();
@@ -159,9 +161,9 @@ public class BattleOfMidway extends JGame {
         }
         for (BarcoEnemigo barcoEnemigo : barcoEnemigos) {
             barcoEnemigo.updatePosition();
-            barcoEnemigo.dispararMisil(barcoEnemigo.getX(), barcoEnemigo.getY());
+            barcoEnemigo.dispararMisil();
         }
-        if ((powerUpArrayList.isEmpty() && armaBonusArrayList.isEmpty()) && timeForBonus > 1500 && cantAvionBonus > 5) {
+        if ((powerUpArrayList.isEmpty() && armaBonusArrayList.isEmpty()) && timeForBonus > 15000 && cantAvionBonus > 5) {
             System.out.println("condiciones para bonus cumplidas");
             Random random = new Random();
             int x = random.nextInt(2) + 1;
@@ -210,9 +212,9 @@ public class BattleOfMidway extends JGame {
                     if (DetectorColiciones.detectarColicionMuniAmiTorreta(municion, torreta)) {
                         toDeleteMunicionAmiga.add(municion);
                         torreta.setVida(torreta.getVida() - 5);
-                        if (torreta.getVida() == 0) {
+                        if (torreta.getVida() <= 0) {
                             toDeleteTorreta.add(torreta);
-                            System.out.println("Torreta destruida");
+                            System.out.println("Torreta destruida + " + torreta);
                         }
                     }
                 }
@@ -323,8 +325,10 @@ public class BattleOfMidway extends JGame {
             refuerzo.remove(avionRefuerzo);
         }
         for (Torreta torreta : toDeleteTorreta) {
+            System.out.println(torreta + "afuera");
             torretas.remove(torreta);
         }
+        toDeleteTorreta.clear();
         yamato(isBossTime, keyboard, delta);
         if (avionP38.getEnegia() <= 0) {
             finalScore = puntuacion;

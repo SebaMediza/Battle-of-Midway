@@ -14,14 +14,18 @@ public class Yamato extends Enemigo{
         this.setPosition(x, y);
         mainTurret = new MegaTorreta("imagenes/0.png", (int)this.x + 500, (int)this.y - 1000);
         torreta1 = new Torreta("imagenes/5.png", (int)this.x + 650, (int)this.y - 1000);
+        torreta1.nombre = "torreta1";
         torreta2 = new Torreta("imagenes/5.png", (int)this.x + 650, (int)this.y - 800);
+        torreta2.nombre = "torreta2";
         torreta3 = new Torreta("imagenes/13.png", (int)this.x + 350, (int)this.y - 800);
+        torreta3.nombre = "torreta3";
         torreta4 = new Torreta("imagenes/13.png", (int)this.x + 350, (int)this.y - 1000);
+        torreta4.nombre = "torreta4";
         //BattleOfMidway.torretas.add(mainTurret);
-        BattleOfMidway.torretas.add(torreta1);
-        BattleOfMidway.torretas.add(torreta2);
-        BattleOfMidway.torretas.add(torreta3);
         BattleOfMidway.torretas.add(torreta4);
+        BattleOfMidway.torretas.add(torreta3);
+        BattleOfMidway.torretas.add(torreta2);
+        BattleOfMidway.torretas.add(torreta1);
         vida = 1000;
     }
 

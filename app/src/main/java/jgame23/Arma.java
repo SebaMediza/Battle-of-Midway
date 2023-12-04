@@ -28,7 +28,7 @@ public abstract class Arma {
     }
 
     public void dispararMisil(double x, double y){
-        Misil misil = new Misil("imagenes/misil.png");
+        Misil misil = new Misil("imagenes/misil.png", x, y);
         BattleOfMidway.addMisilArrayList(misil);
         misil.setPosition(x, y);
     }

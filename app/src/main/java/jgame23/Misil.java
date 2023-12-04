@@ -7,8 +7,9 @@ import java.awt.*;
 
 public class Misil extends ObjetoGrafico{
     float speed = 10;
-    public Misil(String filename) {
+    public Misil(String filename, double x, double y) {
         super(filename);
+        this.setPosition(x, y);
     }
 
     public void updatePosition(double targetX, double targetY){
@@ -27,8 +28,8 @@ public class Misil extends ObjetoGrafico{
         float velocityX = dx * speed;
         float velocityY = dy * speed;
         // Update the follower's position
-        this.x += (int) velocityX;
-        this.y += (int) velocityY;
+        position.x += (int) velocityX;
+        position.y += (int) velocityY;
         //this.setPosition(x, y);
     }
 

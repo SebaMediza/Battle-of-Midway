@@ -18,8 +18,8 @@ public class BarcoEnemigo extends Enemigo {
         super.draw(g);
     }
 
-    public void dispararMisil(int x, int y) {
-       super.dispararMisil(x, y);
+    public void dispararMisil() {
+       super.dispararMisil(position.x, position.y);
     }
 
     @Override
