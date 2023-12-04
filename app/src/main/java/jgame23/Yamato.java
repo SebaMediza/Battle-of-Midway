@@ -5,18 +5,19 @@ import com.entropyinteractive.Keyboard;
 import java.awt.*;
 
 public class Yamato extends Enemigo{
-    private Torreta torreta1, torreta2, torreta3, torreta4, mainTurret;
+    private Torreta torreta1, torreta2, torreta3, torreta4;
     private int vida;
+    private MegaTorreta mainTurret;
 
     public Yamato(String filename, int x, int y) {
         super(filename);
         this.setPosition(x, y);
-        mainTurret = new Torreta("imagenes/0.png", (int)this.x + 500, (int)this.y - 1000);
+        mainTurret = new MegaTorreta("imagenes/0.png", (int)this.x + 500, (int)this.y - 1000);
         torreta1 = new Torreta("imagenes/5.png", (int)this.x + 650, (int)this.y - 1000);
         torreta2 = new Torreta("imagenes/5.png", (int)this.x + 650, (int)this.y - 800);
-        torreta4 = new Torreta("imagenes/13.png", (int)this.x + 350, (int)this.y - 1000);
         torreta3 = new Torreta("imagenes/13.png", (int)this.x + 350, (int)this.y - 800);
-        BattleOfMidway.torretas.add(mainTurret);
+        torreta4 = new Torreta("imagenes/13.png", (int)this.x + 350, (int)this.y - 1000);
+        //BattleOfMidway.torretas.add(mainTurret);
         BattleOfMidway.torretas.add(torreta1);
         BattleOfMidway.torretas.add(torreta2);
         BattleOfMidway.torretas.add(torreta3);
@@ -27,6 +28,7 @@ public class Yamato extends Enemigo{
     @Override
     public void draw(Graphics2D g) {
         super.draw(g);
+        mainTurret.draw(g);
     }
 
     public void updatePosition() {
@@ -39,11 +41,13 @@ public class Yamato extends Enemigo{
     }
 
     @Override
-    public void mover(double delta, Keyboard keyboard) {}
+    public void mover(double delta, Keyboard keyboard) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 
     @Override
     public double getCoordenadas() {
-        return 0;
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     public int getVida() {

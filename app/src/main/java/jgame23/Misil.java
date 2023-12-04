@@ -27,9 +27,9 @@ public class Misil extends ObjetoGrafico{
         float velocityX = dx * speed;
         float velocityY = dy * speed;
         // Update the follower's position
-        x += (int) velocityX;
-        y += (int) velocityY;
-        this.setPosition(x, y);
+        this.x += (int) velocityX;
+        this.y += (int) velocityY;
+        //this.setPosition(x, y);
     }
 
     @Override
