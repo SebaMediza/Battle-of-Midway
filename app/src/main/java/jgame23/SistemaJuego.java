@@ -168,15 +168,20 @@ public class SistemaJuego extends JFrame implements ActionListener {
             playerData.setVisible(false);
         }
         if (actionEvent.getActionCommand().equals(b0.getActionCommand()) && !playerNameString.equals("test")) {
-            BattleOfMidway game = new BattleOfMidway();
+            /* BattleOfMidway game = new BattleOfMidway();
             t = new Thread(() -> game.run(1.0 / 60.0));
-            t.start();
+            t.start(); */
         }
 
     }
 
     public static void main(String[] args) {
         new SistemaJuego();
+    }
+
+    private void config() {
+        JFrame configPnale = new JFrame();
+        //config.setLayout(new Grid());
     }
 
     private void addPlayerData() {

@@ -11,7 +11,8 @@ public class Ranking {
     private Connection conn;
     private Statement stmt;
     private PreparedStatement pstmt;
-    private static final String query = "CREATE TABLE IF NOT EXISTS RANKING (ID INTEGER PRIMARY KEY, JUGADOR VARCHAR(150) NOT NULL, PUNTAJE INTEGER, FECHA VARCHAR(150));";
+private static final String query = "CREATE TABLE IF NOT EXISTS RANKING (ID INTEGER PRIMARY KEY, JUGADOR VARCHAR(150) NOT NULL, PUNTAJE INTEGER, FECHA VARCHAR(150));\n" + 
+                                    "CREATE TABLE IF NOT EXISTS CONFIG (ID INTEGER PRIMARY KEY, KEY VARCHAR(150) NOT NULL, MAP VARCHAR(150) NOT NULL);";
     //private static final String query = "DROP TABLE IF EXISTS RANKING;";
 
     public static void main(String[] args) {

@@ -1,12 +1,5 @@
 package jgame23;
 
-/*
- Ejemplo original
-
- https://www3.ntu.edu.sg/home/ehchua/programming/java/J8c_PlayingSound.html
-
- */
-
 import java.io.*;
 import java.net.URL;
 import javax.sound.sampled.*;
@@ -14,7 +7,8 @@ import javax.sound.sampled.*;
 public enum FXPlayer {
    INTRO("INTRO.wav"),
    SECOND_FASE("SECOND_FASE.wav"),
-   YAMATO("YAMATO.wav");
+   YAMATO("YAMATO.wav"),
+   MAIN_THEME("MAIN_THEME.wav");
 
    public static enum Volume {
       MUTE, LOW, MEDIUM, HIGH
@@ -26,13 +20,9 @@ public enum FXPlayer {
 
    FXPlayer(String wav) {
       try {
-
          URL url = this.getClass().getClassLoader().getResource("SFX/" + wav);
-
          AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(url);
-
          clip = AudioSystem.getClip();
-
          clip.open(audioInputStream);
       } catch (UnsupportedAudioFileException e) {
          e.printStackTrace();
@@ -49,7 +39,6 @@ public enum FXPlayer {
             clip.setFramePosition(0);
             clip.start();
          }
-
       }
    }
 

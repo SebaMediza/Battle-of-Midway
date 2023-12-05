@@ -33,6 +33,8 @@ public class BattleOfMidway extends JGame {
     public static ArrayList<BarcoEnemigo> barcoEnemigos = new ArrayList<>();
     public static ArrayList<AvionRefuerzo> refuerzo = new ArrayList<>();
     public static ArrayList<Torreta> torretas = new ArrayList<>();
+    public static Hashtable<Integer, Torreta> torretasHashtable = new Hashtable<>();
+    public static Hashtable<String, Integer> congif = new Hashtable<>();
 
     public static void addRefuerzoArrayList(AvionRefuerzo avionRefuerzo) {
         refuerzo.add(avionRefuerzo);
@@ -102,6 +104,7 @@ public class BattleOfMidway extends JGame {
         timeForBonus = 0;
         lastTimeForBonus = System.currentTimeMillis();
         FXPlayer.INTRO.play();
+        //FXPlayer.MAIN_THEME.play();
     }
 
     public void gameUpdate(double delta) {
@@ -151,7 +154,7 @@ public class BattleOfMidway extends JGame {
             Random random = new Random();
             for (int i = 0; i < 5; i++) {
                 int x = random.nextInt((795 - 100) + 1) + 100;
-                int y = random.nextInt((200 - 0) + 1) + 0;
+                int y = random.nextInt((100 - 0) + 1) + 0;
                 barcoEnemigos.add(new BarcoEnemigo("imagenes/barquito2.png", x, y));
             }
         }
@@ -194,7 +197,7 @@ public class BattleOfMidway extends JGame {
                     cantEnemigosDerrotados++;
                     inScreenEnemies--;
                     puntuacion = puntuacion + 500;
-                    if (cantEnemigosDerrotados > 10){
+                    if (cantEnemigosDerrotados > 100){
                         FXPlayer.SECOND_FASE.play();
                         secondFase = true;
                     }
@@ -253,7 +256,7 @@ public class BattleOfMidway extends JGame {
                 toDeleteMisilEnemigo.add(misil);
             }
         }
-        if (cantEnemigosDerrotados > 20) {
+        if (cantEnemigosDerrotados > 200) {
             isBossTime = true;
         }
         // BONUS GENERADOS POR MATAR TODOS LOS AVIONCITOS
@@ -407,7 +410,7 @@ public class BattleOfMidway extends JGame {
 
     private void masAviones(int patron) {
         Random r = new Random();
-        int cant = 5;//(r.nextInt(15) + 1);
+        int cant = (r.nextInt(10) + 1);
         switch (patron) {
             case 1:
                 for (int i = 0; i < cant; i++) {

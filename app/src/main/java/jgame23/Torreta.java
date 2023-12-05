@@ -67,8 +67,6 @@ public class Torreta extends ObjetoGrafico {
 
     public void draw(Graphics2D g) {
         super.draw(g);
-        g.setColor(java.awt.Color.RED);
-        g.drawRect((int)this.position.x, (int)this.position.y, this.image.getWidth(), this.image.getHeight());
     }
 
     @Override

@@ -1,7 +1,6 @@
 package jgame23;
 
 import com.entropyinteractive.Keyboard;
-
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -143,7 +142,7 @@ class Avion_p38 extends ObjetoGrafico {
         }
         time += System.currentTimeMillis() - lastTime;
         lastTime = System.currentTimeMillis();
-        if (keyboard.isKeyPressed(KeyEvent.VK_X) && time > 200) {
+        if (keyboard.isKeyPressed(88) && time > 200) {
             if (auto) {
                 currentTimeAuto = System.currentTimeMillis() - startAuto;
                 if (currentTimeAuto > 5000) {
