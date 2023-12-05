@@ -14,6 +14,10 @@ public class Ranking {
     private static final String query = "CREATE TABLE IF NOT EXISTS RANKING (ID INTEGER PRIMARY KEY, JUGADOR VARCHAR(150) NOT NULL, PUNTAJE INTEGER, FECHA VARCHAR(150));";
     //private static final String query = "DROP TABLE IF EXISTS RANKING;";
 
+    public static void main(String[] args) {
+        Ranking ranking = new Ranking();
+    }
+
     public Ranking(){
         this.stmt = null;
         this.pstmt = null;

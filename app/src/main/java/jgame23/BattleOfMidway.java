@@ -73,7 +73,7 @@ public class BattleOfMidway extends JGame {
     private long timeForBonus, lastTimeForBonus;
     private int cantAvionBonus, cantEnemigosDerrotados = 0;
     private int indexOfRemovalAvionEnemigo;
-    private boolean isBossTime = false;
+    private boolean isBossTime = false, secondFase = false;
     private int inScreenEnemies = 0;
 
     public BattleOfMidway() {
@@ -93,12 +93,15 @@ public class BattleOfMidway extends JGame {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+        FXPlayer.init();
+        FXPlayer.volume = FXPlayer.Volume.LOW;
         offSetY = img_fondo.getHeight() - getHeight();
         posicionBarcosY = img_fondo.getHeight() * 2 - getHeight();
         posicionNubesY = img_fondo.getHeight() * 2;
         cantAvionBonus = 0;
         timeForBonus = 0;
         lastTimeForBonus = System.currentTimeMillis();
+        FXPlayer.INTRO.play();
     }
 
     public void gameUpdate(double delta) {
@@ -127,12 +130,7 @@ public class BattleOfMidway extends JGame {
         timeForBonus += System.currentTimeMillis() - lastTimeForBonus;
         lastTimeForBonus = System.currentTimeMillis();
 
-        if (!isBossTime && inScreenEnemies == 0
-        /*
-         * && !hiloPatron1.isAlive() && !hiloPatron2.isAlive()
-         * && !hiloPatron3.isAlive() && !hiloPatron4.isAlive() &&
-         * !hiloPatron5.isAlive()
-         */) {
+        if (!isBossTime && inScreenEnemies == 0) {
             Random random = new Random();
             patronAvionesEnemigoNuevo = random.nextInt(5) + 1;
             while (patronAvionesEnemigoNuevo == patronAvionesEnemigoViejo) {
@@ -140,18 +138,16 @@ public class BattleOfMidway extends JGame {
             }
             patronAvionesEnemigoViejo = patronAvionesEnemigoNuevo;
             masAviones(patronAvionesEnemigoNuevo);
-            // barcos.start();
         }
         movimiento(patronAvionesEnemigoNuevo);
 
-        if (timeForBonus > 15000 /* && avionEnemigoBonusHashtable.isEmpty() && powerUpArrayList.isEmpty()
-                && armaBonusArrayList.isEmpty() */) {
-            /* for (int i = 0; i < 5; i++) {
-                addAvionEnemigoBonusHashtable(new AvionEnemigo("imagenes/avionEnemigo.png",
-                        (0), ((i + 10) * 10)));
-            } */
+        if (timeForBonus > 15000) {
+            for (int i = 0; i < 5; i++) {
+                addAvionEnemigoBonusHashtable(new AvionEnemigo("imagenes/avionEnemigo.png", 0, ((i + 5) * 75)));
+            }
+            timeForBonus = 0;
         }
-        if (!isBossTime && barcoEnemigos.isEmpty()) {
+        if (!isBossTime && secondFase && barcoEnemigos.isEmpty()) {
             Random random = new Random();
             for (int i = 0; i < 5; i++) {
                 int x = random.nextInt((795 - 100) + 1) + 100;
@@ -163,11 +159,11 @@ public class BattleOfMidway extends JGame {
             barcoEnemigo.updatePosition();
             barcoEnemigo.dispararMisil();
         }
-        if ((powerUpArrayList.isEmpty() && armaBonusArrayList.isEmpty()) && timeForBonus > 15000 && cantAvionBonus > 5) {
+        if ((powerUpArrayList.isEmpty() && armaBonusArrayList.isEmpty()) && cantAvionBonus == 5) {
             System.out.println("condiciones para bonus cumplidas");
             Random random = new Random();
-            int x = random.nextInt(2) + 1;
-            if (x == 1) {
+            int x = random.nextInt(100) + 1;
+            if (x <= 50) {
                 powerUp();
             } else {
                 armaUp();
@@ -187,8 +183,10 @@ public class BattleOfMidway extends JGame {
         ArrayList<Torreta> toDeleteTorreta = new ArrayList<>();
 
         // COLICION DE MUNICION AMIGA CON AVION ENEMIGO
-        for (Municion municion : municionAmigaArrayList) {
+        if (!secondFase){
+            for (Municion municion : municionAmigaArrayList) {
             for (Map.Entry<Integer, AvionEnemigo> avionEnemigoEntry : avionEnemigoHashtable.entrySet()) {
+                avionEnemigoEntry.getValue().disparar();
                 if (DetectorColiciones.detectarColicionMunicionAmigaAvionEnemigo(municion,
                         avionEnemigoEntry.getValue())) {
                     indexOfRemovalAvionEnemigo = avionEnemigoEntry.getKey();
@@ -196,6 +194,10 @@ public class BattleOfMidway extends JGame {
                     cantEnemigosDerrotados++;
                     inScreenEnemies--;
                     puntuacion = puntuacion + 500;
+                    if (cantEnemigosDerrotados > 10){
+                        FXPlayer.SECOND_FASE.play();
+                        secondFase = true;
+                    }
                 }
             }
             if (DetectorColiciones.detectarColicionMunicionAmigaBordePantalla(municion)) {
@@ -203,6 +205,7 @@ public class BattleOfMidway extends JGame {
             }
             avionEnemigoHashtable.remove(indexOfRemovalAvionEnemigo);
             indexOfRemovalAvionEnemigo = 0;
+        }
         }
         if (isBossTime) {
             for (Torreta torreta : torretas) {
@@ -219,9 +222,6 @@ public class BattleOfMidway extends JGame {
                     }
                 }
             }
-        }
-        for (Map.Entry<Integer, AvionEnemigo> avionEnemigoEntry : avionEnemigoHashtable.entrySet()) {
-            avionEnemigoEntry.getValue().disparar();
         }
         for (Municion municion : municionEnemigaArrayList) {
             municion.setPosition(municion.getX(), municion.getY() + 5);
@@ -253,7 +253,7 @@ public class BattleOfMidway extends JGame {
                 toDeleteMisilEnemigo.add(misil);
             }
         }
-        if (cantEnemigosDerrotados > 5) {
+        if (cantEnemigosDerrotados > 20) {
             isBossTime = true;
         }
         // BONUS GENERADOS POR MATAR TODOS LOS AVIONCITOS
@@ -339,10 +339,14 @@ public class BattleOfMidway extends JGame {
 
     public void gameDraw(Graphics2D g) {
         g.drawImage(img_fondo, 0, -offSetY, null);// imagen de fondo
-        for (BarcoEnemigo barcoEnemigo : barcoEnemigos) {
-            barcoEnemigo.draw(g);
+        if (!secondFase) {
+            g.drawImage(imagenNubes, 0, -posicionNubesY, null);// imagen nubes
         }
-        g.drawImage(imagenNubes, 0, -posicionNubesY, null);// imagen nubes
+        if(secondFase){
+            for (BarcoEnemigo barcoEnemigo : barcoEnemigos) {
+                barcoEnemigo.draw(g);
+            }
+        }
         if (isBossTime) {
             yamato.draw(g);
         }
@@ -403,26 +407,8 @@ public class BattleOfMidway extends JGame {
 
     private void masAviones(int patron) {
         Random r = new Random();
-        int cant = 5;// (r.nextInt(15) + 1);
+        int cant = 5;//(r.nextInt(15) + 1);
         switch (patron) {
-            /*
-             * case 1:
-             * hiloPatron1.start();
-             * break;
-             * case 2:
-             * hiloPatron2.start();
-             * break;
-             * case 3:
-             * hiloPatron3.start();
-             * break;
-             * case 4:
-             * hiloPatron4.start();
-             * break;
-             * case 5:
-             * hiloPatron5.start();
-             * break;
-             */
-
             case 1:
                 for (int i = 0; i < cant; i++) {
                     addAvionEnemigoHashtable(
@@ -462,71 +448,6 @@ public class BattleOfMidway extends JGame {
                 break;
         }
     }
-    /*
-     * Runnable patron1 = () -> {
-     * try {
-     * for (int i = 0; i < 5; i++) {
-     * // Thread.sleep(500);
-     * addAvionEnemigoHashtable(
-     * new AvionEnemigo("imagenes/Enemigo.png", ((i + 5) * 60), 15));
-     * inScreenEnemies++;
-     * System.out.println(inScreenEnemies);
-     * }
-     * } catch (Exception e) {
-     * System.out.println(e);
-     * }
-     * };
-     * 
-     * Runnable patron2 = () -> {
-     * try {
-     * for (int i = 0; i < 5; i++) {
-     * // Thread.sleep(500);
-     * addAvionEnemigoHashtable(
-     * new AvionEnemigo("imagenes/enemigo_195.png", 0, (i + 5) * 60));
-     * inScreenEnemies++;
-     * }
-     * } catch (Exception e) {
-     * }
-     * };
-     * Runnable patron3 = () -> {
-     * try {
-     * for (int i = 0; i < 5; i++) {
-     * // Thread.sleep(500);
-     * addAvionEnemigoHashtable(
-     * new AvionEnemigo("imagenes/Enemigo.png", (i + 10) * 40, i * 10));
-     * inScreenEnemies++;
-     * }
-     * } catch (Exception e) {
-     * }
-     * };
-     * Runnable patron4 = () -> {
-     * try {
-     * for (int i = 0; i < 5; i++) {
-     * // Thread.sleep(500);
-     * addAvionEnemigoHashtable(
-     * new AvionEnemigo("imagenes/enemigo_315.png", i * 30, i * 30));
-     * inScreenEnemies++;
-     * }
-     * } catch (Exception e) {
-     * }
-     * };
-     * Runnable patron5 = () -> {
-     * try {
-     * for (int i = 0; i < 5; i++) {
-     * // Thread.sleep(500);
-     * addAvionEnemigoHashtable(new AvionEnemigo("imagenes/enemigo_195.png",
-     * (945 - (i * 30)), i * 30));
-     * inScreenEnemies++;
-     * }
-     * } catch (Exception e) {
-     * }
-     * };
-     * Thread hiloPatron1 = new Thread(patron1);
-     * Thread hiloPatron2 = new Thread(patron2);
-     * Thread hiloPatron3 = new Thread(patron3);
-     * Thread hiloPatron4 = new Thread(patron4);
-     * Thread hiloPatron5 = new Thread(patron5);
-     */
 
     private void movimiento(int patron) {
         switch (patron) {
@@ -596,31 +517,4 @@ public class BattleOfMidway extends JGame {
                 break;
         }
     }
-
-    Runnable avionBonus = () -> {
-        try {
-            for (int i = 0; i < 5; i++) {
-                Thread.sleep(500);
-                addAvionEnemigoBonusHashtable(new AvionEnemigo("imagenes/avionEnemigo.png", (0), ((i + 10) * 10)));
-            }
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-    };
-    Thread avionesBonus = new Thread(avionBonus);
-
-    Runnable barcosEnemigos = () -> {
-        try {
-            Random random = new Random();
-            for (int i = 0; i < 5; i++) {
-                int x = random.nextInt((795 - 100) + 1) + 100;
-                int y = random.nextInt(Toolkit.getDefaultToolkit().getScreenSize().height - 37);
-                Thread.sleep(500);
-                barcoEnemigos.add(new BarcoEnemigo("imagenes/barquito2.png", x, y));
-            }
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-    };
-    Thread barcos = new Thread(barcosEnemigos);
 }
