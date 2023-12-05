@@ -6,12 +6,14 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
+import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.Objects;
 
 import static java.lang.System.*;
 
 class Avion_p38 extends ObjetoGrafico {
+    public static Hashtable<String, Integer> congif = new Hashtable<>();
     final double NAVE_DESPLAZAMIENTO = 450.0;
     BufferedImage imagen = null;
     private final Point2D.Double posicion = new Point2D.Double();
@@ -231,14 +233,11 @@ class Avion_p38 extends ObjetoGrafico {
         }
     };
     Runnable ametralladora = () -> {
-        Municion bala = new Municion("imagenes/municion4.png");
-        Municion balaDere = new Municion("imagenes/municion4.png");
-        Municion balaIzqi = new Municion("imagenes/municion4.png");
+        Municion bala = new Municion("imagenes/municion4.png", (int) this.getX() + 18, (int) this.getY());
+        Municion balaDere = new Municion("imagenes/municion4.png", (int) this.getX() + 55, (int) this.getY());
+        Municion balaIzqi = new Municion("imagenes/municion4.png", (int) this.getX() - 35, (int) this.getY());
         BattleOfMidway.addMunicionAmigaArrayList(bala);
         BattleOfMidway.addMunicionAmigaArrayList(balaDere);
         BattleOfMidway.addMunicionAmigaArrayList(balaIzqi);
-        bala.setPosition(this.getX() + 18, this.getY());
-        balaDere.setPosition(this.getX() + 55, this.getY());
-        balaIzqi.setPosition(this.getX() - 35, this.getY());
     };
 }

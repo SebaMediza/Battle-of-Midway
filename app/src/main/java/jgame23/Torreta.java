@@ -24,7 +24,7 @@ public class Torreta extends ObjetoGrafico {
         this.setPosition(x, y);
         time = 0;
         lastTime = System.currentTimeMillis();
-        vida = 5;
+        vida = 50;
         try {
             this.img1 = ImageIO
                     .read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("imagenes/1.png")));
@@ -74,11 +74,11 @@ public class Torreta extends ObjetoGrafico {
         throw new UnsupportedOperationException("Unimplemented method 'mover'");
     }
 
-    public void disparar() {
+    public void disparar(Avion_p38 avion_p38) {
         time += System.currentTimeMillis() - lastTime;
         lastTime = System.currentTimeMillis();
         if (time > 1000) {
-            gun.disparar(this);
+            gun.disparar(this, avion_p38);
             time = 0;
         }
     }

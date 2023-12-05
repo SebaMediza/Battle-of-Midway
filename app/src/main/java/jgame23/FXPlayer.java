@@ -45,4 +45,8 @@ public enum FXPlayer {
    static void init() {
       values();
    }
+
+   public boolean isStopped() {
+      return false;
+   }
 }

@@ -3,31 +3,28 @@ package jgame23;
 public abstract class Arma {
     protected final int danio = 10;
 
-    public void disparar(Avion_p38 plane){
-        Municion bala = new Municion("imagenes/municion4.png");
+    public void disparar(Avion_p38 plane) {
+        Municion bala = new Municion("imagenes/municion4.png", (int) plane.getX() + 18, (int) plane.getY());
         BattleOfMidway.addMunicionAmigaArrayList(bala);
-        bala.setPosition(plane.getX() + 18, plane.getY());
-    }
-    public void disparar(Torreta torreta){
-        Municion bala = new Municion("imagenes/municion4.png");
-        BattleOfMidway.addMunicionEnemigaArrayList(bala);
-        bala.setPosition(torreta.getX(), torreta.getY());
-    }
-    
-
-    public void disparar(Enemigo plane){
-        Municion bala = new Municion("imagenes/tiroEnemigo.png");
-        BattleOfMidway.addMunicionEnemigaArrayList(bala);
-        bala.setPosition(plane.getX(), plane.getY());
     }
 
-    public void disparar(AvionRefuerzo plane){
-        Municion bala = new Municion("imagenes/tiroEnemigo.png");
+    public void disparar(Torreta torreta, Avion_p38 plane) {
+        MunicionPesada bala = new MunicionPesada("imagenes/tiroEnemigo.png", (int) torreta.getX(), (int) torreta.getY(),
+                (int) plane.getX(), (int) plane.getY());
+        BattleOfMidway.addBalaYamato(bala);
+    }
+
+    public void disparar(Enemigo plane) {
+        Municion bala = new Municion("imagenes/tiroEnemigo.png", (int) plane.getX(), (int) plane.getY());
+        BattleOfMidway.addMunicionEnemigaArrayList(bala);
+    }
+
+    public void disparar(AvionRefuerzo plane) {
+        Municion bala = new Municion("imagenes/tiroEnemigo.png", (int) plane.getX(), (int) plane.getY());
         BattleOfMidway.addMunicionAmigaArrayList(bala);
-        bala.setPosition(plane.getX(), plane.getY());
     }
 
-    public void dispararMisil(double x, double y){
+    public void dispararMisil(double x, double y) {
         Misil misil = new Misil("imagenes/misil.png", x, y);
         BattleOfMidway.addMisilArrayList(misil);
         misil.setPosition(x, y);

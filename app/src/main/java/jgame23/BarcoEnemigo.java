@@ -5,6 +5,7 @@ import java.awt.Graphics2D;
 import com.entropyinteractive.Keyboard;
 
 public class BarcoEnemigo extends Enemigo {
+    private int vida = 10;
     public BarcoEnemigo(String filename, double x, double y) {
         super(filename);
         this.setPosition(x, y);
@@ -20,6 +21,14 @@ public class BarcoEnemigo extends Enemigo {
 
     public void dispararMisil() {
        super.dispararMisil(position.x, position.y);
+    }
+
+    public void setVida(int vida) {
+        this.vida = vida;
+    }
+
+    public int getVida() {
+        return this.vida;
     }
 
     @Override
