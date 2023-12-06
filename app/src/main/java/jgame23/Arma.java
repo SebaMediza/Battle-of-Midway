@@ -29,4 +29,10 @@ public abstract class Arma {
         BattleOfMidway.addMisisl(misil);
         misil.setPosition(x, y);
     }
+
+    public void dispararMisil(MegaTorreta torreta) {
+        Misil misil = new Misil("imagenes/misil.png", torreta.position.x, torreta.position.y);
+        BattleOfMidway.addMisisl(misil);
+        //misil.setPosition(x, y);
+    }
 }

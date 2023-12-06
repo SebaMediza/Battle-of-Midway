@@ -6,7 +6,7 @@ import com.entropyinteractive.Keyboard;
 
 public class MunicionPesada extends ObjetoGrafico {
     private int posXObjetivo, posYObjetivo;
-    private final int speedX = 1, speedY = 1;
+    private final int speedX = 2, speedY = 2;
 
     public MunicionPesada(String filename, int x, int y, int posXObjetivo, int posYObjetivo) {
         super(filename);

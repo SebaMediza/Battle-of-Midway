@@ -11,8 +11,8 @@ public class Ranking {
     private Connection conn;
     private Statement stmt;
     private PreparedStatement pstmt;
-private static final String query = "CREATE TABLE IF NOT EXISTS RANKING (ID INTEGER PRIMARY KEY, JUGADOR VARCHAR(150) NOT NULL, PUNTAJE INTEGER, FECHA VARCHAR(150));\n" + 
-                                    "CREATE TABLE IF NOT EXISTS CONFIG (ID INTEGER PRIMARY KEY, KEY VARCHAR(150) NOT NULL, MAP VARCHAR(150) NOT NULL);";
+    private static final String query = "CREATE TABLE IF NOT EXISTS RANKING (ID INTEGER PRIMARY KEY, JUGADOR VARCHAR(150) NOT NULL, PUNTAJE INTEGER, FECHA VARCHAR(150));\n" + 
+                                        "CREATE TABLE IF NOT EXISTS CONFIG (ID INTEGER PRIMARY KEY, KEY VARCHAR(150) NOT NULL, MAP VARCHAR(150) NOT NULL);";
     //private static final String query = "DROP TABLE IF EXISTS RANKING;";
 
     public Ranking(){
@@ -30,20 +30,17 @@ private static final String query = "CREATE TABLE IF NOT EXISTS RANKING (ID INTE
         }
     }
 
-    public void getData() {
-        try {
-            String sql = "SELECT * FROM RANKING ORDER BY PUNTAJE DESC LIMIT 10;";
-            this.stmt = this.conn.createStatement();
-            ResultSet rs = stmt.executeQuery(sql);
-            while (rs.next()) {
-                System.out.println(rs.getInt("id") + " "
-                        + rs.getString("JUGADOR") + " " 
-                        + rs.getInt("PUNTAJE") + " "
-                        + rs.getString("FECHA"));
-            }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
+    public ResultSet getData() throws SQLException {
+        this.stmt = this.conn.createStatement();
+        String sql = "SELECT * FROM RANKING ORDER BY PUNTAJE DESC LIMIT 10;";
+        ResultSet rs = stmt.executeQuery(sql);
+       /*  while (rs.next()) {
+            System.out.println(rs.getInt("id") + " "
+                    + rs.getString("JUGADOR") + " " 
+                    + rs.getInt("PUNTAJE") + " "
+                    + rs.getString("FECHA"));
+        } */
+        return rs;
     }
 
     public void insert(String nombre, int score, String fecha){

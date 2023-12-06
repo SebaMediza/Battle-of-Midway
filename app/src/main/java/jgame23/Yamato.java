@@ -7,7 +7,7 @@ import java.awt.*;
 public class Yamato extends Enemigo{
     private Torreta torreta1, torreta2, torreta3, torreta4, torreta5, torreta6, torreta7;
     private int vida;
-    double velY = 0.5, velX = 0.25;
+    private double velY = 0.5, velX = 0.25;
     private MegaTorreta mainTurret;
     private boolean right = true;
 
@@ -16,17 +16,13 @@ public class Yamato extends Enemigo{
         this.setPosition(x, y);
         mainTurret = new MegaTorreta("imagenes/0.png", (int)this.x + 500, (int)this.y - 1000);
         torreta1 = new Torreta("imagenes/5.png", (int)this.x + 650, (int)this.y - 1000);
-        torreta1.nombre = "torreta1";
         torreta2 = new Torreta("imagenes/5.png", (int)this.x + 650, (int)this.y - 800);
-        torreta2.nombre = "torreta2";
         torreta3 = new Torreta("imagenes/13.png", (int)this.x + 350, (int)this.y - 800);
-        torreta3.nombre = "torreta3";
         torreta4 = new Torreta("imagenes/13.png", (int)this.x + 350, (int)this.y - 1000);
         torreta5 = new Torreta("imagenes/13.png", (int)this.x + 500, (int)this.y - 250);
         torreta6 = new Torreta("imagenes/13.png", (int)this.x + 500, (int)this.y - 400);
         torreta7 = new Torreta("imagenes/13.png", (int)this.x + 500, (int)this.y - 1100);
-        torreta4.nombre = "torreta4";
-        //BattleOfMidway.torretas.add(mainTurret);
+        BattleOfMidway.megaTorreta.add(mainTurret);
         BattleOfMidway.addTorreta(torreta1);
         BattleOfMidway.addTorreta(torreta2);
         BattleOfMidway.addTorreta(torreta3);
@@ -40,7 +36,6 @@ public class Yamato extends Enemigo{
     @Override
     public void draw(Graphics2D g) {
         super.draw(g);
-        mainTurret.draw(g);
     }
 
     public void updatePosition() {
@@ -80,6 +75,9 @@ public class Yamato extends Enemigo{
                 right = true;
             }
         }
+        if (BattleOfMidway.torretasHashtable.isEmpty() && BattleOfMidway.megaTorreta.isEmpty()){
+            this.vida = 0;
+        }
     }
 
     @Override
@@ -94,11 +92,5 @@ public class Yamato extends Enemigo{
 
     public int getVida() {
         return vida;
-    }
-
-    public void setVida() {
-        if (BattleOfMidway.torretasHashtable.isEmpty()){
-            this.vida = 0;
-        }
     }
 }

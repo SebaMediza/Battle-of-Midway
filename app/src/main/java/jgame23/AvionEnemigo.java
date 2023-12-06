@@ -110,12 +110,6 @@ public class AvionEnemigo extends Enemigo {
         this.setPosition(this.getX() - speedAvionEnemigo, this.getY() + speedAvionEnemigo);
     }
     
-    public void temp() {
-        if (this.getY() < 500) {
-            this.setPosition(this.getX(), this.getY() + 10);
-        }
-    }
-
     public void autoMoverAvionBonus(){
         int amplitudeX = 2, amplitudeY = 2;
         int xOrigin = (int) this.getX();

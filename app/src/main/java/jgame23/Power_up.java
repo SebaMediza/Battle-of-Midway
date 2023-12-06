@@ -9,9 +9,6 @@ public abstract class Power_up extends Bonus {
         super(filename);
     }
 
-    
-    
-
     @Override
     public void draw(Graphics2D g) {
         super.draw(g);

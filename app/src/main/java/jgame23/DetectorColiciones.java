@@ -81,7 +81,7 @@ public abstract class DetectorColiciones extends Rectangle {
         Rectangle objeto2 = new Rectangle((int) municionEnemiga.getX(), (int) municionEnemiga.getY(), (int) municionEnemiga.getHeigth(), (int) municionEnemiga.getWidth());
         if (objeto1.intersects(objeto2)){
             colicion = true;
-            BattleOfMidway.finalScore += 500;
+            BattleOfMidway.puntuacion += 500;
         }
         return colicion;
     }
@@ -119,6 +119,11 @@ public abstract class DetectorColiciones extends Rectangle {
     public static boolean detectarColicionesBarcosBalas(Municion municion, BarcoEnemigo barcoEnemigo){
         Rectangle objeto1 = new Rectangle((int) municion.getX(), (int) municion.getY(), (int) municion.getHeigth(), (int) municion.getWidth());
         Rectangle objeto2 = new Rectangle((int) barcoEnemigo.getX(), (int) barcoEnemigo.getY(), (int) barcoEnemigo.getHeigth(), (int) barcoEnemigo.getWidth());
+        return objeto1.intersects(objeto2);
+    }
+    public static boolean detectarColicionesMegaTorreta(Municion municion, MegaTorreta megaTorreta){
+        Rectangle objeto1 = new Rectangle((int) municion.getX(), (int) municion.getY(), (int) municion.getHeigth(), (int) municion.getWidth());
+        Rectangle objeto2 = new Rectangle((int) megaTorreta.getX(), (int) megaTorreta.getY(), (int) megaTorreta.getHeigth(), (int) megaTorreta.getWidth());
         return objeto1.intersects(objeto2);
     }
 

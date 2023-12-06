@@ -6,34 +6,37 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
-import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.Objects;
 
 import static java.lang.System.*;
 
 class Avion_p38 extends ObjetoGrafico {
-    public static Hashtable<String, Integer> congif = new Hashtable<>();
     final double NAVE_DESPLAZAMIENTO = 450.0;
-    BufferedImage imagen = null;
+    private BufferedImage imagen = null;
     private final Point2D.Double posicion = new Point2D.Double();
     private final ArmaGenerica gun = new ArmaGenerica();
     public static int enegia = 100;
     private long time, lastTime;
-    int xMin = 0;
-    int yMin = 27;
-    int xMax = 895;
-    int yMax = Toolkit.getDefaultToolkit().getScreenSize().height - 76;
+    private int xMin = 0;
+    private int yMin = 27;
+    private int xMax = 895;
+    private int yMax = Toolkit.getDefaultToolkit().getScreenSize().height - 76;
     private boolean inclinadoIzquierda = false;
     private boolean inclinadoDerecha = false;
     private boolean auto = false;
     private boolean ametralladoraActivada = false;
-    BufferedImage imagenincliizqui;
-    BufferedImage imageninclidere;
-    long startAuto, currentTimeAuto;
+    private boolean laser = false;
+    private BufferedImage imagenincliizqui;
+    private BufferedImage imageninclidere;
+    private long startAuto, currentTimeAuto, lastTimeEnergia, nowEnergia;
 
     public void setAuto(boolean auto) {
         this.auto = auto;
+        startAuto = System.currentTimeMillis();
+    }
+    public void setLaser(boolean laser) {
+        this.laser = laser;
         startAuto = System.currentTimeMillis();
     }
     public void setAmetralladora(boolean ametralladora) {
@@ -54,21 +57,8 @@ class Avion_p38 extends ObjetoGrafico {
         }
         time = 0;
         lastTime = System.currentTimeMillis();
-    }
-
-    public Avion_p38(String file, double x, double y) {
-        super(file);
-        try {
-            this.setImagen(ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream(file))));
-            imagenincliizqui = ImageIO.read(Objects.requireNonNull(
-                    getClass().getClassLoader().getResourceAsStream("imagenes/inclinacionIzquierda.png")));
-            imageninclidere = ImageIO.read(Objects.requireNonNull(
-                    getClass().getClassLoader().getResourceAsStream("imagenes/inclinacionDerecha.png")));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        time = 0;
-        lastTime = System.currentTimeMillis();
+        nowEnergia = 0;
+        lastTimeEnergia = System.currentTimeMillis();
     }
 
     public void setImagen(BufferedImage img) {
@@ -164,8 +154,19 @@ class Avion_p38 extends ObjetoGrafico {
                     dispararAmetralladora();
                     time = 0;
                 } else {
-                    disparar();
-                    time = 0;
+                    if (laser){
+                        System.out.println("Disparo laser");
+                        currentTimeAuto = System.currentTimeMillis() - startAuto;
+                        if (currentTimeAuto > 5000) {
+                            setLaser(false);
+                            System.out.println("Laser desactivado");
+                            time = 0;
+                        }
+                        disparar();
+                    } else{
+                        disparar();
+                        time = 0;
+                    }
                 }
             }
         }
@@ -179,7 +180,20 @@ class Avion_p38 extends ObjetoGrafico {
         }
     }
 
+    public void drainEnergia(){
+        nowEnergia += System.currentTimeMillis() - lastTimeEnergia;
+        lastTimeEnergia = System.currentTimeMillis();
+        if (nowEnergia > 30000){
+            enegia -= 1;
+            nowEnergia = 0;
+        }
+    }
+
     public void disparar() {
+        gun.disparar(this);
+    }
+
+    public void dispararLaser() {
         gun.disparar(this);
     }
 
@@ -214,6 +228,15 @@ class Avion_p38 extends ObjetoGrafico {
             Avion_p38.enegia = 100;
         } else {
             Avion_p38.enegia += enegia;
+        }
+    }
+
+    public boolean sufEnergia() {
+        if (Avion_p38.enegia > 25) {
+            enegia -= 25;
+            return true;
+        } else {
+            return false;
         }
     }
 

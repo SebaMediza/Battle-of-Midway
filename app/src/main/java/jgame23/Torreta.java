@@ -17,7 +17,6 @@ public class Torreta extends ObjetoGrafico {
     private BufferedImage img1, img3, img5, img7, img9, img11, img13, img15;
     private BufferedImage img2, img4, img6, img8, img10, img12, img14, img16;
     private BufferedImage kabom;
-    String nombre;
 
     public Torreta(String filename, int x, int y) {
         super(filename);
@@ -97,10 +96,6 @@ public class Torreta extends ObjetoGrafico {
         if (this.vida <= 0) {
             this.image = this.kabom;
         }
-    }
-
-    public String toString() {
-        return nombre;
     }
 
     public void rotacion(Avion_p38 avion_p38) {

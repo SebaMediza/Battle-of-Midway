@@ -31,10 +31,9 @@ import java.util.*;
 
 public class BattleOfMidway extends JGame implements ActionListener {
     private Ranking ranking;
-    int patronAvionesEnemigoNuevo, patronAvionesEnemigoViejo = 0;
+    private int patronAvionesEnemigoNuevo, patronAvionesEnemigoViejo = 0;
     public static int puntuacion = 0;
     private static final double VELOCIDAD_IMAGEN = 61, velocidadNuber = 200, velocidadBarco = 59;
-    public static int finalScore = 0;
     private int offSetY, posicionNubesY, posicionBarcosY;
     private BufferedImage img_fondo, imagenNubes, vida;
     private Avion_p38 avionP38;
@@ -44,7 +43,7 @@ public class BattleOfMidway extends JGame implements ActionListener {
     private int indexOfRemovalAvionEnemigo;
     private boolean isDone = false, isBossTime = false, secondFase = false, rayo = false, tsumani = false;
     private int inScreenEnemies = 0;
-    static int index = 1, indexAvionBonus = 1, indexMisil = 1, indexBarco = 1, indexTorreta = 1, balaYamato = 1,
+    private static int index = 1, indexAvionBonus = 1, indexMisil = 1, indexBarco = 1, indexTorreta = 1, balaYamato = 1,
             indexBalaEmemiga = 1;
     private Clip MAIN_THEME;
 
@@ -57,6 +56,7 @@ public class BattleOfMidway extends JGame implements ActionListener {
     public static ArrayList<Power_up> powerUpArrayList = new ArrayList<>();
     public static ArrayList<ArmaBonus> armaBonusArrayList = new ArrayList<>();
     public static ArrayList<AvionRefuerzo> refuerzo = new ArrayList<>();
+    public static ArrayList<MegaTorreta> megaTorreta = new ArrayList<>();
     public static Hashtable<Integer, Torreta> torretasHashtable = new Hashtable<>();
     public static Hashtable<Integer, MunicionPesada> balasYamato = new Hashtable<>();
 
@@ -69,6 +69,7 @@ public class BattleOfMidway extends JGame implements ActionListener {
     private ArrayList<ArmaBonus> toDeleteActivatedArmaBonus = new ArrayList<>();
     private ArrayList<AvionRefuerzo> toDeleteRefuerzo = new ArrayList<>();
     private ArrayList<Torreta> toDeleteTorreta = new ArrayList<>();
+    private ArrayList<MegaTorreta> toDeleteMegaTorreta = new ArrayList<>();
 
     public static void addAvionEnemigoHashtable(AvionEnemigo avionEnemigo) {
         avionEnemigoHashtable.put(index, avionEnemigo);
@@ -169,11 +170,11 @@ public class BattleOfMidway extends JGame implements ActionListener {
 
     public void gameUpdate(double delta) {
         Keyboard keyboard = this.getKeyboard();
-        if (keyboard.isKeyPressed(KeyEvent.VK_Z) && avionP38.getEnegia() > 25 && !secondFase) {
+        if (keyboard.isKeyPressed(KeyEvent.VK_Z) && avionP38.sufEnergia() && !secondFase) {
             rayo = true;
         }
-        if (keyboard.isKeyPressed(KeyEvent.VK_Z) && avionP38.getEnegia() > 25 && secondFase) {
-            System.out.println("Tsunami");
+        if (keyboard.isKeyPressed(KeyEvent.VK_Z) && avionP38.sufEnergia() && secondFase) {
+
             tsumani = true;
         }
         avionP38.mover(delta, keyboard);
@@ -284,7 +285,7 @@ public class BattleOfMidway extends JGame implements ActionListener {
                     toDeleteMunicionAmiga.add(municion);
                 }
             }
-            if (cantEnemigosDerrotados > 10 && !secondFase) {
+            if (cantEnemigosDerrotados > 100 && !secondFase) {
                 MAIN_THEME.stop();
                 try {
                     Clip clip = AudioSystem.getClip();
@@ -343,6 +344,18 @@ public class BattleOfMidway extends JGame implements ActionListener {
             }
             torretasHashtable.remove(afueraTorreta);
             afueraTorreta = 0;
+            for (MegaTorreta megaTorreta : megaTorreta) {
+                megaTorreta.disparar();
+                for (Municion municion : municionAmigaArrayList) {
+                    if (DetectorColiciones.detectarColicionesMegaTorreta(municion, megaTorreta)){
+                        toDeleteMunicionAmiga.add(municion);
+                        megaTorreta.hit();
+                        if (megaTorreta.getVida() <= 0){
+                            toDeleteMegaTorreta.add(megaTorreta);
+                        }
+                    }
+                }
+            }
         }
         int afueraBalaEnemiga = 0;
         for (Map.Entry<Integer, Municion> municion : municionEnemigaArrayList.entrySet()) {
@@ -397,7 +410,7 @@ public class BattleOfMidway extends JGame implements ActionListener {
             misilArrayList.remove(afueraMisil);
             afueraMisil = 0;
         }
-        if (cantEnemigosDerrotados > 20 && !isBossTime) {
+        if (cantEnemigosDerrotados > 200 && !isBossTime) {
             MAIN_THEME.stop();
             try {
                 Clip clip = AudioSystem.getClip();
@@ -487,14 +500,16 @@ public class BattleOfMidway extends JGame implements ActionListener {
         for (AvionRefuerzo avionRefuerzo : toDeleteRefuerzo) {
             refuerzo.remove(avionRefuerzo);
         }
-        toDeleteTorreta.clear();
+        for (MegaTorreta megaTorretas : toDeleteMegaTorreta){
+            megaTorreta.remove(megaTorretas);
+        }
         yamato(isBossTime, keyboard, delta);
         if ((avionP38.getEnegia() <= 0 || yamato.getVida() <= 0) && !isDone) {
             isDone = true;
-            finalScore = puntuacion;
             MAIN_THEME.stop();
             endGame();
         }
+        toDeleteTorreta.clear();
         toDeleteActivatedArmaBonus.clear();
         toDeleteActivatedPowerUp.clear();
         toDeleteArmaBonus.clear();
@@ -551,7 +566,6 @@ public class BattleOfMidway extends JGame implements ActionListener {
             }
         }
         if (secondFase) {
-            /* for (BarcoEnemigo barcoEnemigo : barcoEnemigos) { */
             for (Map.Entry<Integer, BarcoEnemigo> barcoEnemigo : barcoEnemigo.entrySet()) {
                 barcoEnemigo.getValue().draw(g);
             }
@@ -588,6 +602,9 @@ public class BattleOfMidway extends JGame implements ActionListener {
         for (Map.Entry<Integer, Torreta> torreta : torretasHashtable.entrySet()) {
             torreta.getValue().draw(g);
         }
+        for (MegaTorreta megaTorreta : megaTorreta) {
+            megaTorreta.draw(g);
+        }
         for (Map.Entry<Integer, MunicionPesada> municion : balasYamato.entrySet()) {
             municion.getValue().draw(g);
         }
@@ -612,18 +629,11 @@ public class BattleOfMidway extends JGame implements ActionListener {
     public void yamato(Boolean isBossTime, Keyboard keyboard, Double delta) {
         if (isBossTime) {
             yamato.updatePosition();
-            // yamato.disparar();
         }
     }
 
     public void gameShutdown() {
         Log.info(getClass().getSimpleName(), "Shutting down game");
-    }
-
-    public static void main(String[] args) {
-        BattleOfMidway battleOfMidway = new BattleOfMidway();
-        battleOfMidway.run(1.0 / 60.0);
-
     }
 
     private void masAviones(int patron) {
@@ -737,16 +747,18 @@ public class BattleOfMidway extends JGame implements ActionListener {
                 break;
         }
     }
+
     private JButton boton;
     private String date = LocalDate.now().toString();
-    JTextArea nombre;
-    JFrame morido;
+    private JTextArea nombre;
+    private JFrame morido;
+
     private void endGame() {
         morido = new JFrame();
         boton = new JButton("Guardar");
         boton.addActionListener(this);
         JLabel fechaObtencion = new JLabel("Fecha de Obtencion: " + LocalDate.now().toString());
-        JLabel label = new JLabel("Puntaje Obtenido: " + String.valueOf(finalScore));
+        JLabel label = new JLabel("Puntaje Obtenido: " + String.valueOf(puntuacion));
         JLabel label2 = new JLabel("Ingrese su nombre");
         nombre = new JTextArea();
         LayoutManager layout = new GridLayout(5, 1);
@@ -761,13 +773,13 @@ public class BattleOfMidway extends JGame implements ActionListener {
         morido.add(boton);
         morido.setVisible(true);
     }
+
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         if (actionEvent.getActionCommand().equals(boton.getActionCommand())) {
             morido.setVisible(false);
-            ranking.insert(nombre.getText(), finalScore, date);
+            ranking.insert(nombre.getText(), puntuacion, date);
             this.stop();
-            ranking.getData();
         }
 
     }

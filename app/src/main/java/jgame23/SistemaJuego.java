@@ -3,22 +3,19 @@ package jgame23;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Arrays;
 
 public class SistemaJuego extends JFrame implements ActionListener {
-    JFrame mainFrame;
-    JPanel leftPanel, midPanel;
-    JLabel l0, l1, l2, l3, l4, l5, l6, l7, l8, l9, l10, l11, l12, l13, l14, l15, warning;
-    ImageIcon i0, i1, i2, i3, i4, i5, i6, i7, i8, i9, i10, i11, i12, i13, i14, i15;
-    JButton b0, b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11, b12, b13, b14, b15;
-    ImageIcon home, user, community;
-    JButton homeButton, communityButton, userButton;
-    Thread t;
-    JFrame playerData;
-    JTextArea playerName;
-    JButton done;
-    String playerNameString = "test";
-    public static Thread gameThread;
+    private JFrame mainFrame;
+    private JPanel leftPanel, midPanel;
+    private JLabel l0, l1, l2, l3, l4, l5, l6, l7, l8, l9, l10, l11, l12, l13, l14, l15;
+    private ImageIcon i0, i1, i2, i3, i4, i5, i6, i7, i8, i9, i10, i11, i12, i13, i14, i15;
+    private JButton b0, b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11, b12, b13, b14, b15;
+    private ImageIcon home, user, community;
+    private JButton homeButton, communityButton, userButton;
+    private Thread gameThread;
 
     public SistemaJuego() {
         this.GUI();
@@ -58,6 +55,7 @@ public class SistemaJuego extends JFrame implements ActionListener {
         community = new ImageIcon("app/src/main/resources/ImagesSisJuego/equipo.png");
         communityButton = new JButton("Comunidad");
         communityButton.setIcon(community);
+        communityButton.addActionListener(this);
         constraints.gridx = 2;
         leftPanel.add(communityButton, constraints);
 
@@ -108,8 +106,6 @@ public class SistemaJuego extends JFrame implements ActionListener {
         l13 = new JLabel(i13);
         l14 = new JLabel(i14);
         l15 = new JLabel(i15);
-        warning = new JLabel(
-                "Antes de comenzar a jugar ingresar tu nombre de usuario, haciendo click en el boto de usuario en la parte superior");
         /* AGREGO LOS BOTONES DE "DESCARGAR" */
         constraints1.gridy = 1;
         int index = 2;
@@ -167,10 +163,30 @@ public class SistemaJuego extends JFrame implements ActionListener {
             gameThread = new Thread(() -> game.run(1.0 / 60.0));
             gameThread.start();
         }
+        if (actionEvent.getActionCommand().equals(communityButton.getActionCommand())) {
+            try {
+                mostrarPuntaje();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
 
     }
 
-    public static void main(String[] args) {
-        new SistemaJuego();
+    private void mostrarPuntaje() throws SQLException{
+        JFrame rankingFrame = new JFrame();
+        rankingFrame.setLayout(new GridLayout(10, 1));
+        Ranking ranking = new Ranking();
+        ResultSet resultSet = ranking.getData();
+        while (resultSet.next()) {
+            JLabel label = new JLabel("Jugador: "
+                    + resultSet.getString("JUGADOR") + " - Punaje: " 
+                    + resultSet.getInt("PUNTAJE") + " - Fecha de Juego: "
+                    + resultSet.getString("FECHA"));
+            rankingFrame.add(label);
+        }
+        rankingFrame.setSize(500, 500);
+        rankingFrame.setVisible(true);
+        rankingFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
 }
