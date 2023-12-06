@@ -43,15 +43,25 @@ public abstract class DetectorColiciones extends Rectangle {
         Rectangle objeto2 = new Rectangle(0,  5, Toolkit.getDefaultToolkit().getScreenSize().width, 25);
         return objeto1.intersects(objeto2);
     }
+    public static boolean detectarColicionAvionEnemigoBordePantallaSup(AvionEnemigo avionEnemigo){
+        Rectangle objeto1 = new Rectangle((int) avionEnemigo.getX(), (int) avionEnemigo.getY(), (int) avionEnemigo.getHeigth(), (int) avionEnemigo.getWidth());
+        Rectangle objeto2 = new Rectangle(0,  -5, Toolkit.getDefaultToolkit().getScreenSize().width, 25);
+        return objeto1.intersects(objeto2);
+    }
+    public static boolean detectarColicionBArcoEnemigoBordePantallaInf(BarcoEnemigo barcoEnemigo){
+        Rectangle objeto1 = new Rectangle((int) barcoEnemigo.getX(), (int) barcoEnemigo.getY(), (int) barcoEnemigo.getHeigth(), (int) barcoEnemigo.getWidth());
+        Rectangle objeto2 = new Rectangle(0, (Toolkit.getDefaultToolkit().getScreenSize().height - 50), Toolkit.getDefaultToolkit().getScreenSize().width, 25);
+        return objeto1.intersects(objeto2);
+    }
 
     public static boolean detectarColicionAvionEnemigoBordePantallaDerecho(AvionEnemigo avionEnemigo){
         Rectangle objeto1 = new Rectangle((int) avionEnemigo.getX(), (int) avionEnemigo.getY(), (int) avionEnemigo.getHeigth(), (int) avionEnemigo.getWidth());
-        Rectangle objeto2 = new Rectangle(945,  5, Toolkit.getDefaultToolkit().getScreenSize().width, 25);
+        Rectangle objeto2 = new Rectangle(950, 0, 20, Toolkit.getDefaultToolkit().getScreenSize().height - 37);
         return objeto1.intersects(objeto2);
     }
     public static boolean detectarColicionAvionEnemigoBordePantallaIzquierdo(AvionEnemigo avionEnemigo){
         Rectangle objeto1 = new Rectangle((int) avionEnemigo.getX(), (int) avionEnemigo.getY(), (int) avionEnemigo.getHeigth(), (int) avionEnemigo.getWidth());
-        Rectangle objeto2 = new Rectangle(0,  5, Toolkit.getDefaultToolkit().getScreenSize().width, 25);
+        Rectangle objeto2 = new Rectangle(0, 0, 10, Toolkit.getDefaultToolkit().getScreenSize().height - 37);
         return objeto1.intersects(objeto2);
     }
     
