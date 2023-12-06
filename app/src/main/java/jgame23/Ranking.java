@@ -15,10 +15,6 @@ private static final String query = "CREATE TABLE IF NOT EXISTS RANKING (ID INTE
                                     "CREATE TABLE IF NOT EXISTS CONFIG (ID INTEGER PRIMARY KEY, KEY VARCHAR(150) NOT NULL, MAP VARCHAR(150) NOT NULL);";
     //private static final String query = "DROP TABLE IF EXISTS RANKING;";
 
-    public static void main(String[] args) {
-        Ranking ranking = new Ranking();
-    }
-
     public Ranking(){
         this.stmt = null;
         this.pstmt = null;

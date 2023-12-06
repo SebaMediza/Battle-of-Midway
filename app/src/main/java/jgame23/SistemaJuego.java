@@ -173,9 +173,4 @@ public class SistemaJuego extends JFrame implements ActionListener {
     public static void main(String[] args) {
         new SistemaJuego();
     }
-
-    private void config() {
-        JFrame configPnale = new JFrame();
-        // config.setLayout(new Grid());
-    }
 }

@@ -2,10 +2,14 @@ package jgame23;
 
 import com.entropyinteractive.*; //jgame
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.image.*; //imagenes
 import java.io.IOException;
+import java.time.LocalDate;
 
+import javax.swing.*;
 import javax.imageio.*; //imagenes
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -25,7 +29,7 @@ import java.util.*;
  * - arreglar UML
  */
 
-public class BattleOfMidway extends JGame {
+public class BattleOfMidway extends JGame implements ActionListener {
     private Ranking ranking;
     int patronAvionesEnemigoNuevo, patronAvionesEnemigoViejo = 0;
     public static int puntuacion = 0;
@@ -38,7 +42,7 @@ public class BattleOfMidway extends JGame {
     private long timeForBonus, lastTimeForBonus;
     private int cantAvionBonus, cantEnemigosDerrotados = 0;
     private int indexOfRemovalAvionEnemigo;
-    private boolean isBossTime = false, secondFase = false, rayo = false, tsumani = false;
+    private boolean isDone = false, isBossTime = false, secondFase = false, rayo = false, tsumani = false;
     private int inScreenEnemies = 0;
     static int index = 1, indexAvionBonus = 1, indexMisil = 1, indexBarco = 1, indexTorreta = 1, balaYamato = 1,
             indexBalaEmemiga = 1;
@@ -383,13 +387,37 @@ public class BattleOfMidway extends JGame {
             }
             if (DetectorColiciones.detectarColicionP38MisilEnemigo(avionP38, misil.getValue())) {
                 afueraMisil = misil.getKey();
+                System.out.println("P38 golpeado");
+                System.out.println(avionP38.getEnegia());
+                avionP38.superHit();
+                System.out.println(avionP38.getEnegia());
             }
         }
         if (afueraMisil != 0) {
             misilArrayList.remove(afueraMisil);
             afueraMisil = 0;
         }
-        if (cantEnemigosDerrotados > 200) {
+        if (cantEnemigosDerrotados > 20 && !isBossTime) {
+            MAIN_THEME.stop();
+            try {
+                Clip clip = AudioSystem.getClip();
+                AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(
+                        getClass().getClassLoader().getResourceAsStream("SFX/YAMATO.wav"));
+                clip.open(audioInputStream);
+                clip.addLineListener(e -> {
+                    if (e.getType() == LineEvent.Type.STOP) {
+                        try {
+                            MAIN_THEME.loop(Clip.LOOP_CONTINUOUSLY);
+                            isBossTime = true;
+                        } catch (Exception es) {
+                            System.out.println(es);
+                        }
+                    }
+                });
+                clip.start();
+            } catch (Exception e) {
+                System.out.println(e);
+            }
             isBossTime = true;
         }
 
@@ -461,10 +489,11 @@ public class BattleOfMidway extends JGame {
         }
         toDeleteTorreta.clear();
         yamato(isBossTime, keyboard, delta);
-        if (avionP38.getEnegia() <= 0 || yamato.getVida() <= 0) {
+        if ((avionP38.getEnegia() <= 0 || yamato.getVida() <= 0) && !isDone) {
+            isDone = true;
             finalScore = puntuacion;
-            // this.stop();
-            // ranking.setVisible(true);
+            MAIN_THEME.stop();
+            endGame();
         }
         toDeleteActivatedArmaBonus.clear();
         toDeleteActivatedPowerUp.clear();
@@ -598,8 +627,7 @@ public class BattleOfMidway extends JGame {
     }
 
     private void masAviones(int patron) {
-        Random r = new Random();
-        int cant = 5;// (r.nextInt(10) + 1);
+        int cant = 5;
         switch (patron) {
             case 1:
                 for (int i = 0; i < cant; i++) {
@@ -708,5 +736,39 @@ public class BattleOfMidway extends JGame {
                 armaBonusArrayList.add(new Refuerzo("imagenes/Refuerzo.png", (int) x, (int) y));
                 break;
         }
+    }
+    private JButton boton;
+    private String date = LocalDate.now().toString();
+    JTextArea nombre;
+    JFrame morido;
+    private void endGame() {
+        morido = new JFrame();
+        boton = new JButton("Guardar");
+        boton.addActionListener(this);
+        JLabel fechaObtencion = new JLabel("Fecha de Obtencion: " + LocalDate.now().toString());
+        JLabel label = new JLabel("Puntaje Obtenido: " + String.valueOf(finalScore));
+        JLabel label2 = new JLabel("Ingrese su nombre");
+        nombre = new JTextArea();
+        LayoutManager layout = new GridLayout(5, 1);
+        morido.setLayout(layout);
+        morido.setSize(500, 500);
+        morido.setLocationRelativeTo(null);
+        morido.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        morido.add(label2);
+        morido.add(nombre);
+        morido.add(label);
+        morido.add(fechaObtencion);
+        morido.add(boton);
+        morido.setVisible(true);
+    }
+    @Override
+    public void actionPerformed(ActionEvent actionEvent) {
+        if (actionEvent.getActionCommand().equals(boton.getActionCommand())) {
+            morido.setVisible(false);
+            ranking.insert(nombre.getText(), finalScore, date);
+            this.stop();
+            ranking.getData();
+        }
+
     }
 }

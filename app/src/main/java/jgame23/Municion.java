@@ -4,7 +4,6 @@ import com.entropyinteractive.Keyboard;
 import java.awt.*;
 
 public class Municion extends ObjetoGrafico {
-    private int posXObjetivo, posYObjetivo;
 
     public Municion(String filename, int x, int y) {
         super(filename);
@@ -24,18 +23,5 @@ public class Municion extends ObjetoGrafico {
     @Override
     public double getCoordenadas() {
         return 0;
-    }
-
-    void setPosXObjetivo(int x) {
-        this.posXObjetivo = x;
-    }
-
-    void setPosYObjetivo(int y) {
-        this.posYObjetivo = y;
-    }
-
-    void recorerVector() {
-        
-
     }
 }

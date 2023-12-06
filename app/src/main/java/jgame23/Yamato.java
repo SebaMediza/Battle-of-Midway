@@ -6,9 +6,10 @@ import java.awt.*;
 
 public class Yamato extends Enemigo{
     private Torreta torreta1, torreta2, torreta3, torreta4, torreta5, torreta6, torreta7;
-    private int vida, velX = 1;
-    double velY = 0.5;
+    private int vida;
+    double velY = 0.5, velX = 0.25;
     private MegaTorreta mainTurret;
+    private boolean right = true;
 
     public Yamato(String filename, int x, int y) {
         super(filename);
@@ -33,7 +34,7 @@ public class Yamato extends Enemigo{
         BattleOfMidway.addTorreta(torreta5);
         BattleOfMidway.addTorreta(torreta6);
         BattleOfMidway.addTorreta(torreta7);
-        vida = 1000;
+        vida = 500;
     }
 
     @Override
@@ -52,6 +53,33 @@ public class Yamato extends Enemigo{
         torreta5.setPosition(torreta5.position.x, torreta5.position.y + velY/*0.50*/);
         torreta6.setPosition(torreta6.position.x, torreta6.position.y + velY/*0.50*/);
         torreta7.setPosition(torreta7.position.x, torreta7.position.y + velY/*0.50*/);
+        if (right){
+            this.position.x -=velX;
+            mainTurret.setPosition(mainTurret.position.x -= velX, mainTurret.position.y);
+            torreta1.setPosition(torreta1.position.x -= velX, torreta1.position.y);
+            torreta2.setPosition(torreta2.position.x -= velX, torreta2.position.y);
+            torreta3.setPosition(torreta3.position.x -= velX, torreta3.position.y);
+            torreta4.setPosition(torreta4.position.x -= velX, torreta4.position.y);
+            torreta5.setPosition(torreta5.position.x -= velX, torreta5.position.y);
+            torreta6.setPosition(torreta6.position.x -= velX, torreta6.position.y);
+            torreta7.setPosition(torreta7.position.x -= velX, torreta7.position.y);
+            if (this.position.x < -430){
+                right = false;
+            }
+        }else{
+            this.position.x +=velX;
+            mainTurret.setPosition(mainTurret.position.x += velX, mainTurret.position.y);
+            torreta1.setPosition(torreta1.position.x += velX, torreta1.position.y);
+            torreta2.setPosition(torreta2.position.x += velX, torreta2.position.y);
+            torreta3.setPosition(torreta3.position.x += velX, torreta3.position.y);
+            torreta4.setPosition(torreta4.position.x += velX, torreta4.position.y);
+            torreta5.setPosition(torreta5.position.x += velX, torreta5.position.y);
+            torreta6.setPosition(torreta6.position.x += velX, torreta6.position.y);
+            torreta7.setPosition(torreta7.position.x += velX, torreta7.position.y);
+            if (this.position.x > 215){
+                right = true;
+            }
+        }
     }
 
     @Override
@@ -68,14 +96,9 @@ public class Yamato extends Enemigo{
         return vida;
     }
 
-    public void setVida(int vida) {
+    public void setVida() {
         if (BattleOfMidway.torretasHashtable.isEmpty()){
-            this.vida = vida;
-            if (vida <= 0) {
-                BattleOfMidway.torretasHashtable.clear();
-            }
-        }else{
-            this.vida = 1000;
+            this.vida = 0;
         }
     }
 }

@@ -24,7 +24,7 @@ public class Torreta extends ObjetoGrafico {
         this.setPosition(x, y);
         time = 0;
         lastTime = System.currentTimeMillis();
-        vida = 50;
+        vida = 125;
         try {
             this.img1 = ImageIO
                     .read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("imagenes/1.png")));
