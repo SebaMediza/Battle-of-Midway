@@ -2,7 +2,10 @@ package jgame23;
 
 import com.entropyinteractive.*; //jgame
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.awt.image.*; //imagenes
+import java.io.IOException;
+
 import javax.imageio.*; //imagenes
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -35,9 +38,10 @@ public class BattleOfMidway extends JGame {
     private long timeForBonus, lastTimeForBonus;
     private int cantAvionBonus, cantEnemigosDerrotados = 0;
     private int indexOfRemovalAvionEnemigo;
-    private boolean isBossTime = false, secondFase = false;
+    private boolean isBossTime = false, secondFase = false, rayo = false, tsumani = false;
     private int inScreenEnemies = 0;
-    static int index = 1, indexAvionBonus = 1, indexMisil = 1, indexBarco = 1, indexTorreta = 1, balaYamato = 1, indexBalaEmemiga = 1;
+    static int index = 1, indexAvionBonus = 1, indexMisil = 1, indexBarco = 1, indexTorreta = 1, balaYamato = 1,
+            indexBalaEmemiga = 1;
     private Clip MAIN_THEME;
 
     public static ArrayList<Municion> municionAmigaArrayList = new ArrayList<>();
@@ -67,7 +71,7 @@ public class BattleOfMidway extends JGame {
         index++;
     }
 
-    public static void addMisisl(Misil misil){
+    public static void addMisisl(Misil misil) {
         misilArrayList.put(indexMisil, misil);
         indexMisil++;
     }
@@ -161,6 +165,13 @@ public class BattleOfMidway extends JGame {
 
     public void gameUpdate(double delta) {
         Keyboard keyboard = this.getKeyboard();
+        if (keyboard.isKeyPressed(KeyEvent.VK_Z) && avionP38.getEnegia() > 25 && !secondFase) {
+            rayo = true;
+        }
+        if (keyboard.isKeyPressed(KeyEvent.VK_Z) && avionP38.getEnegia() > 25 && secondFase) {
+            System.out.println("Tsunami");
+            tsumani = true;
+        }
         avionP38.mover(delta, keyboard);
         for (AvionRefuerzo avionRefuerzo : refuerzo) {
             avionRefuerzo.mover(delta, keyboard);
@@ -185,7 +196,7 @@ public class BattleOfMidway extends JGame {
         timeForBonus += System.currentTimeMillis() - lastTimeForBonus;
         lastTimeForBonus = System.currentTimeMillis();
 
-        if (!isBossTime && inScreenEnemies == 0) {
+        if (!isBossTime && inScreenEnemies == 0 && !secondFase) {
             Random random = new Random();
             patronAvionesEnemigoNuevo = random.nextInt(5) + 1;
             while (patronAvionesEnemigoNuevo == patronAvionesEnemigoViejo) {
@@ -225,10 +236,12 @@ public class BattleOfMidway extends JGame {
                     if (barcoEnemigo.getValue().getVida() <= 0) {
                         System.out.println("Barco destruido");
                         afueraBarco = barcoEnemigo.getKey();
+                        puntuacion += 500;
+                        cantEnemigosDerrotados++;
                     }
                 }
             }
-            if (DetectorColiciones.detectarColicionBArcoEnemigoBordePantallaInf(barcoEnemigo.getValue())){
+            if (DetectorColiciones.detectarColicionBArcoEnemigoBordePantallaInf(barcoEnemigo.getValue())) {
                 afueraBarco = barcoEnemigo.getKey();
             }
         }
@@ -261,33 +274,33 @@ public class BattleOfMidway extends JGame {
                         cantEnemigosDerrotados++;
                         inScreenEnemies--;
                         puntuacion = puntuacion + 500;
-                        if (cantEnemigosDerrotados > 100 && !secondFase) {
-                            MAIN_THEME.stop();
-                            try {
-                                Clip clip = AudioSystem.getClip();
-                                AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(
-                                        getClass().getClassLoader().getResourceAsStream("SFX/SECOND_FASE.wav"));
-                                clip.open(audioInputStream);
-                                clip.addLineListener(e -> {
-                                    if (e.getType() == LineEvent.Type.STOP) {
-                                        try {
-                                            MAIN_THEME.loop(Clip.LOOP_CONTINUOUSLY);
-                                        } catch (Exception es) {
-                                            System.out.println(es);
-                                        }
-                                    }
-                                });
-                                clip.start();
-                            } catch (Exception e) {
-                                System.out.println(e);
-                            }
-                            secondFase = true;
-                        }
                     }
                 }
                 if (DetectorColiciones.detectarColicionMunicionAmigaBordePantalla(municion)) {
                     toDeleteMunicionAmiga.add(municion);
                 }
+            }
+            if (cantEnemigosDerrotados > 10 && !secondFase) {
+                MAIN_THEME.stop();
+                try {
+                    Clip clip = AudioSystem.getClip();
+                    AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(
+                            getClass().getClassLoader().getResourceAsStream("SFX/SECOND_FASE.wav"));
+                    clip.open(audioInputStream);
+                    clip.addLineListener(e -> {
+                        if (e.getType() == LineEvent.Type.STOP) {
+                            try {
+                                MAIN_THEME.loop(Clip.LOOP_CONTINUOUSLY);
+                            } catch (Exception es) {
+                                System.out.println(es);
+                            }
+                        }
+                    });
+                    clip.start();
+                } catch (Exception e) {
+                    System.out.println(e);
+                }
+                secondFase = true;
             }
             avionEnemigoHashtable.remove(indexOfRemovalAvionEnemigo);
             indexOfRemovalAvionEnemigo = 0;
@@ -296,12 +309,14 @@ public class BattleOfMidway extends JGame {
             }
             for (Map.Entry<Integer, AvionEnemigo> avionEnemigoEntry : avionEnemigoHashtable.entrySet()) {
                 if (DetectorColiciones.detectarColicionAvionEnemigoBordePantallaDerecho(avionEnemigoEntry.getValue()) ||
-                    DetectorColiciones.detectarColicionAvionEnemigoBordePantallaIzquierdo(avionEnemigoEntry.getValue()) ||
-                    DetectorColiciones.detectarColicionAvionEnemigoBordePantallaSup(avionEnemigoEntry.getValue())) {
+                        DetectorColiciones
+                                .detectarColicionAvionEnemigoBordePantallaIzquierdo(avionEnemigoEntry.getValue())
+                        ||
+                        DetectorColiciones.detectarColicionAvionEnemigoBordePantallaSup(avionEnemigoEntry.getValue())) {
                     indexOfRemovalAvionEnemigo = avionEnemigoEntry.getKey();
                 }
             }
-            if (indexOfRemovalAvionEnemigo != 0){
+            if (indexOfRemovalAvionEnemigo != 0) {
                 avionEnemigoHashtable.remove(indexOfRemovalAvionEnemigo);
                 inScreenEnemies--;
                 indexOfRemovalAvionEnemigo = 0;
@@ -370,7 +385,7 @@ public class BattleOfMidway extends JGame {
                 afueraMisil = misil.getKey();
             }
         }
-        if (afueraMisil != 0){
+        if (afueraMisil != 0) {
             misilArrayList.remove(afueraMisil);
             afueraMisil = 0;
         }
@@ -466,6 +481,46 @@ public class BattleOfMidway extends JGame {
         if (!secondFase) {
             g.drawImage(imagenNubes, 0, -posicionNubesY, null);// imagen nubes
         }
+        if (rayo) {
+            try {
+                System.out.println(cantEnemigosDerrotados);
+                BufferedImage rayito = ImageIO.read(Objects
+                        .requireNonNull(getClass().getClassLoader().getResourceAsStream("imagenes/repalago-2.gif")));
+                BufferedImage fondito = ImageIO.read(Objects
+                        .requireNonNull(getClass().getClassLoader().getResourceAsStream("imagenes/fondo3_menos.png")));
+                BufferedImage nubecitas = ImageIO.read(Objects
+                        .requireNonNull(getClass().getClassLoader().getResourceAsStream("imagenes/nubes2-menos.png")));
+                g.drawImage(fondito, 0, -offSetY, null);
+                g.drawImage(nubecitas, 0, -posicionNubesY, null);// imagen nubes
+                g.drawImage(rayito, 0, 0, null);
+                cantEnemigosDerrotados += avionEnemigoHashtable.size();
+                System.out.println(cantEnemigosDerrotados);
+                avionEnemigoHashtable.clear();
+                inScreenEnemies = 0;
+                rayo = false;
+            } catch (IOException e) {
+                System.out.println(e);
+            }
+        }
+        if (tsumani) {
+            try {
+                BufferedImage olita = ImageIO.read(Objects
+                        .requireNonNull(getClass().getClassLoader().getResourceAsStream("imagenes/big-ola.gif")));
+                BufferedImage fondito = ImageIO.read(Objects
+                        .requireNonNull(getClass().getClassLoader().getResourceAsStream("imagenes/fondo3_menos.png")));
+                BufferedImage nubecitas = ImageIO.read(Objects
+                        .requireNonNull(getClass().getClassLoader().getResourceAsStream("imagenes/nubes2-menos.png")));
+                g.drawImage(fondito, 0, -offSetY, null);
+                g.drawImage(nubecitas, 0, -posicionNubesY, null);// imagen nubes
+                g.drawImage(olita, 0, 0, null);
+                cantEnemigosDerrotados += barcoEnemigo.size();
+                barcoEnemigo.clear();
+                inScreenEnemies = 0;
+                tsumani = false;
+            } catch (IOException e) {
+                System.out.println(e);
+            }
+        }
         if (secondFase) {
             /* for (BarcoEnemigo barcoEnemigo : barcoEnemigos) { */
             for (Map.Entry<Integer, BarcoEnemigo> barcoEnemigo : barcoEnemigo.entrySet()) {
@@ -544,7 +599,7 @@ public class BattleOfMidway extends JGame {
 
     private void masAviones(int patron) {
         Random r = new Random();
-        int cant = 5;//(r.nextInt(10) + 1);
+        int cant = 5;// (r.nextInt(10) + 1);
         switch (patron) {
             case 1:
                 for (int i = 0; i < cant; i++) {

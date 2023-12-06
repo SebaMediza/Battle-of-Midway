@@ -18,6 +18,7 @@ public class SistemaJuego extends JFrame implements ActionListener {
     JTextArea playerName;
     JButton done;
     String playerNameString = "test";
+    public static Thread gameThread;
 
     public SistemaJuego() {
         this.GUI();
@@ -107,7 +108,8 @@ public class SistemaJuego extends JFrame implements ActionListener {
         l13 = new JLabel(i13);
         l14 = new JLabel(i14);
         l15 = new JLabel(i15);
-        warning = new JLabel("Antes de comenzar a jugar ingresar tu nombre de usuario, haciendo click en el boto de usuario en la parte superior");
+        warning = new JLabel(
+                "Antes de comenzar a jugar ingresar tu nombre de usuario, haciendo click en el boto de usuario en la parte superior");
         /* AGREGO LOS BOTONES DE "DESCARGAR" */
         constraints1.gridy = 1;
         int index = 2;
@@ -160,17 +162,10 @@ public class SistemaJuego extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
-        if (actionEvent.getActionCommand().equals(userButton.getActionCommand())) {
-            addPlayerData();
-        }
-        if (actionEvent.getActionCommand().equals(done.getActionCommand())) {
-            playerNameString = playerName.getText();
-            playerData.setVisible(false);
-        }
-        if (actionEvent.getActionCommand().equals(b0.getActionCommand()) && !playerNameString.equals("test")) {
-            /* BattleOfMidway game = new BattleOfMidway();
-            t = new Thread(() -> game.run(1.0 / 60.0));
-            t.start(); */
+        if (actionEvent.getActionCommand().equals(b0.getActionCommand())) {
+            BattleOfMidway game = new BattleOfMidway();
+            gameThread = new Thread(() -> game.run(1.0 / 60.0));
+            gameThread.start();
         }
 
     }
@@ -181,28 +176,6 @@ public class SistemaJuego extends JFrame implements ActionListener {
 
     private void config() {
         JFrame configPnale = new JFrame();
-        //config.setLayout(new Grid());
-    }
-
-    private void addPlayerData() {
-        playerData = new JFrame();
-        playerData.setLayout(new GridBagLayout());
-        playerData.setSize(250, 250);
-        GridBagConstraints gridBagConstraints = new GridBagConstraints();
-        gridBagConstraints.insets = new Insets(3, 3, 3, 3);
-
-        playerName = new JTextArea();
-        done = new JButton("Aceptar");
-
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        playerData.add(playerName, gridBagConstraints);
-
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        playerData.add(done, gridBagConstraints);
-        done.addActionListener(this);
-        playerData.setVisible(true);
-        playerData.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        // config.setLayout(new Grid());
     }
 }
