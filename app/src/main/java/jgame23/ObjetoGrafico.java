@@ -27,8 +27,8 @@ public abstract class ObjetoGrafico extends Rectangle implements Movible{
     public double getY(){return this.position.getY();}
     public void setPosition(double x, double y){this.position.setLocation(x,y);}
     public void draw(Graphics2D g){
-        g.setColor(java.awt.Color.RED);
-        g.drawRect((int)this.position.x, (int)this.position.y, this.image.getWidth(), this.image.getHeight());
+        /* g.setColor(java.awt.Color.RED);
+        g.drawRect((int)this.position.x, (int)this.position.y, this.image.getWidth(), this.image.getHeight()); */
         g.drawImage(this.image, (int)this.position.getX(), (int)this.position.getY(), null);
     }
 }
